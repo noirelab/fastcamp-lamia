@@ -4,7 +4,7 @@ Projeto base do FastCamp. É a partir daqui que os próximos cards são feitos.
 
 ## Stack
 
-- Next.js 15 (App Router)
+- Next.js 16 (App Router)
 - TypeScript com `strict`
 - Tailwind CSS
 - ESLint e Prettier
@@ -16,7 +16,7 @@ Projeto base do FastCamp. É a partir daqui que os próximos cards são feitos.
 Precisa de Node 20+ e pnpm.
 
 ```bash
-git clone https://github.com/<usuario>/fastcamp-lamia.git
+git clone https://github.com/noirelab/fastcamp-lamia.git
 cd fastcamp-lamia
 pnpm install
 cp .env.example .env.local
@@ -31,6 +31,7 @@ Outros comandos:
 pnpm build    # build de produção
 pnpm start    # roda o build
 pnpm lint     # ESLint (sem saída = sem problemas)
+pnpm format   # formata o código com Prettier
 ```
 
 ## Variáveis de ambiente
