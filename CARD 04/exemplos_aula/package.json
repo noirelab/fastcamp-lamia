@@ -1,0 +1,18 @@
+{
+  "name": "exemplos-aula-typescript",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc",
+    "demo:utility": "tsx src/utility-types.ts",
+    "demo:auth": "tsx src/modules/auth/service.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

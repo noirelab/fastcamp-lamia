@@ -1,1 +1,9 @@
-cd "CARD 03/meu-projeto" && pnpm lint
+set -e
+
+if [ -d "CARD 03/meu-projeto/node_modules" ]; then
+  (cd "CARD 03/meu-projeto" && pnpm lint)
+fi
+
+if [ -d "CARD 04/exemplos_aula/node_modules" ]; then
+  (cd "CARD 04/exemplos_aula" && pnpm typecheck)
+fi
