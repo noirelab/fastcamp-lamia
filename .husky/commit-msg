@@ -1,1 +1,1 @@
-pnpm commitlint --edit "$1"
+cd "CARD 03/meu-projeto" && pnpm exec commitlint --edit "$1"
