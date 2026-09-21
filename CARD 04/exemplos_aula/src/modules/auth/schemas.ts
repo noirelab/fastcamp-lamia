@@ -7,5 +7,5 @@ export const userSchema = z.object({
   password: z.string().min(6),
 });
 
-// z.infer: o tipo sai do schema, sem duplicar a definição na mão
+// z.infer: tipo sai do schema
 export type UserInput = z.infer<typeof userSchema>;

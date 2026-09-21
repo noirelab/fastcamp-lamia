@@ -1,30 +1,17 @@
-# Exemplos de aula — TypeScript (Card 04)
+# Card 04: exemplos de aula (TypeScript)
 
 Exercícios de TypeScript do card 04 do FastCamp LAMIA.
 
-## Conceitos praticados
+Arquivos:
 
-| Conceito | Arquivo |
-|---|---|
-| Tipos primitivos, arrays, tuplas, enum | `src/index.ts` |
-| Funções tipadas e interface de função | `src/functions.ts` |
-| Objetos tipados, `interface` vs `type` | `src/objects.ts` |
-| Classes, herança e modificadores de acesso | `src/classes.ts` |
-| Generics (`<T>`) | `src/generics.ts` |
-| Utility types (`Partial`, `Pick`, `Omit`, `Record`) | `src/utility-types.ts` |
-| Path alias `@/modules/auth` e `z.infer<typeof schema>` | `src/modules/auth/` |
+- `src/index.ts` — primitivos, arrays, tuplas, enum
+- `src/functions.ts` — funções tipadas
+- `src/objects.ts` — objetos, interface vs type
+- `src/classes.ts` — classes e herança
+- `src/generics.ts` — generics
+- `src/utility-types.ts` — Partial, Pick, Omit, Record
+- `src/modules/auth/` — path alias `@/modules/auth` e z.infer
 
-## Como rodar
+Como rodar:
 
-```bash
-pnpm install
-pnpm typecheck
-pnpm demo:utility
-pnpm demo:auth
-```
-
-Qualquer arquivo também pode ser executado direto:
-
-```bash
-pnpm exec tsx src/generics.ts
-```
+`pnpm install`, depois `pnpm typecheck`, `pnpm demo:utility` ou `pnpm demo:auth`.
