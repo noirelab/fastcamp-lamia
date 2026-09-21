@@ -1,1 +1,1 @@
-pnpm lint
+cd "CARD 03/meu-projeto" && pnpm lint
