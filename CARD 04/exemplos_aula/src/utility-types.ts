@@ -6,16 +6,16 @@ interface Product {
   stock: number;
 }
 
-// Pick: seleciona só os campos necessários
+// Pick: pega campos
 type ProductSummary = Pick<Product, 'id' | 'name' | 'price'>;
 
-// Omit: tudo menos o id (que é gerado depois)
+// Omit: tudo menos o id
 type ProductInput = Omit<Product, 'id'>;
 
-// Partial: todos os campos viram opcionais (útil para updates)
+// Partial: tudo opcional
 type ProductPatch = Partial<ProductInput>;
 
-// Record: dicionário indexado por chave
+// Record: dicionário
 type ProductCatalog = Record<string, ProductSummary>;
 
 const input: ProductInput = {
