@@ -17,6 +17,7 @@ pnpm dev
 
 ```bash
 pnpm lint
+pnpm format:check
 pnpm test
 pnpm build
 ```
