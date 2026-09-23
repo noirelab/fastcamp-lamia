@@ -35,9 +35,7 @@ export const DashboardScreen = () => {
     .filter((post) => post.title.toLowerCase().includes(search.toLowerCase()));
 
   const readCount = (posts ?? []).filter((post) => readIds.includes(post.id)).length;
-  const favoriteCount = (posts ?? []).filter((post) =>
-    favoriteIds.includes(post.id),
-  ).length;
+  const favoriteCount = (posts ?? []).filter((post) => favoriteIds.includes(post.id)).length;
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
@@ -46,9 +44,16 @@ export const DashboardScreen = () => {
         <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Posts da API pública</h1>
-            <p className="mt-2 max-w-2xl leading-7 text-gray-600">Lista de posts do JSONPlaceholder.</p>
+            <p className="mt-2 max-w-2xl leading-7 text-gray-600">
+              Lista de posts do JSONPlaceholder.
+            </p>
           </div>
-          <button type="button" onClick={() => refetch()} disabled={isFetching} className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+          >
             {isFetching ? "Atualizando..." : "Atualizar posts"}
           </button>
         </div>
@@ -94,8 +99,16 @@ export const DashboardScreen = () => {
           </div>
         </div>
 
-        {isPending && <p role="status" className="mt-5 text-gray-600">Carregando posts...</p>}
-        {isError && <p role="alert" className="mt-5 text-red-600">Não foi possível carregar os posts.</p>}
+        {isPending && (
+          <p role="status" className="mt-5 text-gray-600">
+            Carregando posts...
+          </p>
+        )}
+        {isError && (
+          <p role="alert" className="mt-5 text-red-600">
+            Não foi possível carregar os posts.
+          </p>
+        )}
         {posts &&
           (filteredPosts.length > 0 ? (
             <ul className="mt-5 grid gap-3">
@@ -109,7 +122,9 @@ export const DashboardScreen = () => {
                     className={`rounded border p-4 ${isRead ? "bg-gray-50" : "bg-white"}`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
-                      <p className={`font-semibold capitalize ${isRead ? "text-gray-500" : "text-gray-900"}`}>
+                      <p
+                        className={`font-semibold capitalize ${isRead ? "text-gray-500" : "text-gray-900"}`}
+                      >
                         {post.title}
                       </p>
                       <div className="flex flex-wrap gap-2">

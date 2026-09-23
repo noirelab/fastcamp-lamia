@@ -17,10 +17,8 @@ export const usePostsStore = create<PostsStore>()(
     (set) => ({
       readIds: [],
       favoriteIds: [],
-      toggleRead: (id) =>
-        set((state) => ({ readIds: toggleId(state.readIds, id) })),
-      toggleFavorite: (id) =>
-        set((state) => ({ favoriteIds: toggleId(state.favoriteIds, id) })),
+      toggleRead: (id) => set((state) => ({ readIds: toggleId(state.readIds, id) })),
+      toggleFavorite: (id) => set((state) => ({ favoriteIds: toggleId(state.favoriteIds, id) })),
     }),
     {
       name: "posts-state",

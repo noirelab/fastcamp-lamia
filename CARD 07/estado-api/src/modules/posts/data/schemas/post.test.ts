@@ -3,9 +3,7 @@ import { postSchema, postsSchema } from "./post";
 
 describe("postsSchema", () => {
   it("aceita uma lista de posts válida", () => {
-    const result = postsSchema.safeParse([
-      { id: 1, title: "Título", body: "Conteúdo" },
-    ]);
+    const result = postsSchema.safeParse([{ id: 1, title: "Título", body: "Conteúdo" }]);
 
     expect(result.success).toBe(true);
   });

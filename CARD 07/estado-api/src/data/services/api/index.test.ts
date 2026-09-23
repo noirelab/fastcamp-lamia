@@ -25,9 +25,7 @@ describe("api", () => {
       throw error;
     };
 
-    await expect(api.get("/protegido")).rejects.toThrow(
-      "Request failed with status code 401",
-    );
+    await expect(api.get("/protegido")).rejects.toThrow("Request failed with status code 401");
 
     expect(getToken()).toBeNull();
     expect(useUserStore.getState().user).toBeNull();

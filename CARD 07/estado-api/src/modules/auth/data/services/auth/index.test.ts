@@ -1,8 +1,4 @@
-import {
-  AxiosError,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/data/services/api", () => ({
@@ -74,15 +70,13 @@ describe("AuthService.login", () => {
     const otherNotFound = makeAxiosError(404, "/posts");
     mockedPost.mockRejectedValueOnce(otherNotFound);
 
-    await expect(
-      AuthService.login({ email: "piloto@f1.com", password: "senha123" }),
-    ).rejects.toBe(otherNotFound);
+    await expect(AuthService.login({ email: "piloto@f1.com", password: "senha123" })).rejects.toBe(
+      otherNotFound,
+    );
   });
 
   it("recusa payload inválido antes de chamar a API", async () => {
-    await expect(
-      AuthService.login({ email: "sem-arroba", password: "123" }),
-    ).rejects.toThrow();
+    await expect(AuthService.login({ email: "sem-arroba", password: "123" })).rejects.toThrow();
 
     expect(mockedPost).not.toHaveBeenCalled();
   });
@@ -91,8 +85,8 @@ describe("AuthService.login", () => {
     const serverError = makeAxiosError(500);
     mockedPost.mockRejectedValueOnce(serverError);
 
-    await expect(
-      AuthService.login({ email: "piloto@f1.com", password: "senha123" }),
-    ).rejects.toBe(serverError);
+    await expect(AuthService.login({ email: "piloto@f1.com", password: "senha123" })).rejects.toBe(
+      serverError,
+    );
   });
 });

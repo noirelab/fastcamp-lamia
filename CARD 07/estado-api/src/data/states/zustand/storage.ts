@@ -7,6 +7,4 @@ const memoryStorage: StateStorage = {
 };
 
 export const createSafeStorage = () =>
-  createJSONStorage(() =>
-    typeof window === "undefined" ? memoryStorage : localStorage,
-  );
+  createJSONStorage(() => (typeof window === "undefined" ? memoryStorage : localStorage));
