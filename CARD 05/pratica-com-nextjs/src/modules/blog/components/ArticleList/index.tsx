@@ -13,7 +13,7 @@ export const ArticleList = ({ articles }: ArticleListProps) => {
   const [search, setSearch] = useState("");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite } = useFavorites();
 
   const filteredArticles = articles
     .filter((article) => !onlyFavorites || isFavorite(article.slug))
@@ -59,12 +59,7 @@ export const ArticleList = ({ articles }: ArticleListProps) => {
       {filteredArticles.length > 0 ? (
         <div className="mt-4 grid gap-4">
           {filteredArticles.map((article) => (
-            <ArticleCard
-              key={article.slug}
-              article={article}
-              isFavorite={isFavorite(article.slug)}
-              onToggleFavorite={toggleFavorite}
-            />
+            <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
       ) : (

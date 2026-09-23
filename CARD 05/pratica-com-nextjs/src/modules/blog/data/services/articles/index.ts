@@ -1,43 +1,44 @@
+import { z } from "zod";
 import type { Article } from "@/modules/blog/types";
 
-const HN_API_URL = "https://hn.algolia.com/api/v1";
 const HN_QUERY = "formula 1";
 const REVALIDATE_SECONDS = 60 * 60;
 
-interface HnHit {
-  objectID: string;
-  title: string | null;
-  author: string | null;
-  points: number | null;
-  num_comments: number | null;
-  created_at: string | null;
-  url: string | null;
-  story_text: string | null;
-}
+const hnHitSchema = z.object({
+  objectID: z.string(),
+  title: z.string().nullish(),
+  author: z.string().nullish(),
+  points: z.number().nullish(),
+  num_comments: z.number().nullish(),
+  created_at: z.string().nullish(),
+  url: z.string().nullish(),
+  story_text: z.string().nullish(),
+});
 
-interface HnSearchResponse {
-  hits: HnHit[];
-}
+const hnSearchSchema = z.object({
+  hits: z.array(hnHitSchema),
+});
 
-interface HnItem {
-  id: number;
-  title: string | null;
-  author: string | null;
-  points: number | null;
-  created_at: string | null;
-  url: string | null;
-  text: string | null;
-}
+type HnHit = z.infer<typeof hnHitSchema>;
 
-const formatDate = (value: string | null) =>
+const getApiUrl = () => {
+  const url = process.env.HN_API_URL;
+
+  if (!url) {
+    throw new Error("Defina HN_API_URL no .env (veja o .env.example).");
+  }
+
+  return url;
+};
+
+const formatDate = (value: string | null | undefined) =>
   value ? new Date(value).toLocaleDateString("pt-BR") : "Data desconhecida";
 
 const stripHtml = (value: string) => value.replace(/<[^>]*>/g, "").trim();
 
-const mapHit = (hit: HnHit): Article => ({
+const toArticle = (hit: HnHit & { title: string }): Article => ({
   slug: hit.objectID,
-  title: hit.title ?? "Sem título",
-  description: `${hit.points ?? 0} pontos · ${hit.num_comments ?? 0} comentários`,
+  title: hit.title,
   author: hit.author ?? "desconhecido",
   points: hit.points ?? 0,
   comments: hit.num_comments ?? 0,
@@ -50,14 +51,10 @@ const mapHit = (hit: HnHit): Article => ({
       ],
 });
 
-export const fetchArticles = async (): Promise<Article[]> => {
-  const params = new URLSearchParams({
-    query: HN_QUERY,
-    tags: "story",
-    hitsPerPage: "12",
-  });
+const searchStories = async (params: Record<string, string>) => {
+  const query = new URLSearchParams({ tags: "story", ...params });
 
-  const response = await fetch(`${HN_API_URL}/search?${params}`, {
+  const response = await fetch(`${getApiUrl()}/search?${query}`, {
     next: { revalidate: REVALIDATE_SECONDS },
   });
 
@@ -65,35 +62,26 @@ export const fetchArticles = async (): Promise<Article[]> => {
     throw new Error("Não foi possível buscar as notícias na Hacker News.");
   }
 
-  const data = (await response.json()) as HnSearchResponse;
+  const result = hnSearchSchema.safeParse(await response.json());
 
-  return data.hits.filter((hit) => hit.title).map(mapHit);
+  if (!result.success) {
+    throw new Error("A Hacker News respondeu num formato inesperado.");
+  }
+
+  return result.data.hits
+    .filter((hit): hit is HnHit & { title: string } => Boolean(hit.title))
+    .map(toArticle);
 };
 
-export const fetchArticleBySlug = async (slug: string): Promise<Article | null> => {
-  const response = await fetch(`${HN_API_URL}/items/${slug}`, {
-    next: { revalidate: REVALIDATE_SECONDS },
-  });
+export const fetchArticles = () =>
+  searchStories({ query: HN_QUERY, hitsPerPage: "12" });
 
-  if (!response.ok) return null;
+export const fetchArticleBySlug = async (
+  slug: string,
+): Promise<Article | null> => {
+  if (!/^\d+$/.test(slug)) return null;
 
-  const item = (await response.json()) as HnItem;
+  const [article] = await searchStories({ tags: `story,story_${slug}` });
 
-  if (!item.title) return null;
-
-  return {
-    slug: String(item.id),
-    title: item.title,
-    description: `${item.points ?? 0} pontos · por ${item.author ?? "desconhecido"}`,
-    author: item.author ?? "desconhecido",
-    points: item.points ?? 0,
-    comments: 0,
-    date: formatDate(item.created_at),
-    url: item.url ?? `https://news.ycombinator.com/item?id=${item.id}`,
-    content: item.text
-      ? [stripHtml(item.text)]
-      : [
-          "Esta notícia foi publicada originalmente na Hacker News. Abra o link original para ler o conteúdo completo.",
-        ],
-  };
+  return article ?? null;
 };

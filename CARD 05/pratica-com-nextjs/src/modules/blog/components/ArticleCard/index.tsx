@@ -1,17 +1,12 @@
 import Link from "next/link";
+import { FavoriteButton } from "@/modules/blog/components/FavoriteButton";
 import type { Article } from "@/modules/blog/types";
 
 interface ArticleCardProps {
   article: Article;
-  isFavorite: boolean;
-  onToggleFavorite: (slug: string) => void;
 }
 
-export const ArticleCard = ({
-  article,
-  isFavorite,
-  onToggleFavorite,
-}: ArticleCardProps) => {
+export const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
     <article className="rounded border bg-white p-5 shadow-sm">
       <p className="text-sm text-gray-500">
@@ -25,7 +20,7 @@ export const ArticleCard = ({
           {article.title}
         </Link>
       </h3>
-      <p className="mt-2 leading-6 text-gray-600">{article.description}</p>
+      <p className="mt-2 leading-6 text-gray-600">por {article.author}</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Link
           href={`/artigos/${article.slug}`}
@@ -33,23 +28,7 @@ export const ArticleCard = ({
         >
           Ler notícia
         </Link>
-        <button
-          type="button"
-          aria-pressed={isFavorite}
-          aria-label={
-            isFavorite
-              ? `Remover ${article.title} dos favoritos`
-              : `Salvar ${article.title} nos favoritos`
-          }
-          onClick={() => onToggleFavorite(article.slug)}
-          className={`rounded border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
-            isFavorite
-              ? "border-blue-600 bg-blue-50 text-blue-700"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          {isFavorite ? "Salva" : "Salvar"}
-        </button>
+        <FavoriteButton slug={article.slug} title={article.title} />
       </div>
     </article>
   );
