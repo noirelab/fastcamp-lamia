@@ -2,7 +2,10 @@ export interface Article {
   slug: string;
   title: string;
   description: string;
-  category: string;
+  author: string;
+  points: number;
+  comments: number;
   date: string;
+  url: string;
   content: string[];
 }

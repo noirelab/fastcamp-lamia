@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { fetchArticles } from "@/modules/blog/data/services/articles";
 import { HomeScreen } from "@/modules/blog/screens/HomeScreen";
 
 export const metadata: Metadata = {
-  title: "Posts | F1 2021 - Mini Blog",
+  title: "Notícias | F1 2021 - Mini Blog",
 };
 
-export default function HomePage() {
-  return <HomeScreen />;
+export default async function HomePage() {
+  const articles = await fetchArticles();
+
+  return <HomeScreen articles={articles} />;
 }

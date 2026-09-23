@@ -1,18 +1,24 @@
 import { notFound } from "next/navigation";
-import { articles } from "@/modules/blog/data/articles";
+import { fetchArticleBySlug, fetchArticles } from "@/modules/blog/data/services/articles";
 import { ArticleDetailScreen } from "@/modules/blog/screens/ArticleDetailScreen";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
-}
+export const generateStaticParams = async () => {
+  try {
+    const articles = await fetchArticles();
+
+    return articles.map((article) => ({ slug: article.slug }));
+  } catch {
+    return [];
+  }
+};
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await fetchArticleBySlug(slug);
 
   if (!article) {
     notFound();
