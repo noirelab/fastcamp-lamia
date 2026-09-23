@@ -1,12 +1,12 @@
 import { users } from "@/data/users";
-import { parseCreateUser, updateUserSchema } from "@/schemas";
+import { createUserSchema, parseBody, updateUserSchema } from "@/schemas";
 import { countByRole, sortBy, toSummary } from "@/utils/collections";
 import type { ApiResponse, UserRole, UserSummary, UserWithTimestamps } from "@/types";
 import { UserRepository } from "@/services/userRepository";
 
 const repository = new UserRepository(users);
 
-export const listUsers = (): UserWithTimestamps[] => sortBy(repository.all(), "name");
+const listUsers = (): UserWithTimestamps[] => sortBy(repository.all(), "name");
 
 export const listSummaries = (): UserSummary[] => listUsers().map(toSummary);
 
@@ -15,8 +15,14 @@ export const rolesSummary = (): Record<UserRole, number> => countByRole(reposito
 export const findUserById = (id: string): UserWithTimestamps | undefined =>
   repository.findById(id);
 
-export const createUser = (payload: unknown): ApiResponse<UserWithTimestamps> => {
-  const input = parseCreateUser(payload);
+export const createUser = (body: string): ApiResponse<UserWithTimestamps> => {
+  const parsed = parseBody(createUserSchema, body);
+
+  if (!parsed.success) {
+    return { data: null, success: false, message: parsed.message };
+  }
+
+  const input = parsed.data;
 
   if (repository.findByEmail(input.email)) {
     return { data: null, success: false, message: "E-mail já cadastrado." };
@@ -39,14 +45,15 @@ export const createUser = (payload: unknown): ApiResponse<UserWithTimestamps> =>
   return { data: user, success: true, message: "Usuário criado com sucesso." };
 };
 
-export const updateUser = (
-  id: string,
-  payload: unknown,
-): ApiResponse<UserWithTimestamps> => {
-  const patch = updateUserSchema.parse(payload);
+export const updateUser = (id: string, body: string): ApiResponse<UserWithTimestamps> => {
+  const parsed = parseBody(updateUserSchema, body);
+
+  if (!parsed.success) {
+    return { data: null, success: false, message: parsed.message };
+  }
 
   const updated = repository.update(id, {
-    ...patch,
+    ...parsed.data,
     updatedAt: new Date().toISOString(),
   });
 

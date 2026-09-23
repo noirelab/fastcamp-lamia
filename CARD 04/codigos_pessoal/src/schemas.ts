@@ -6,15 +6,34 @@ export const createUserSchema = z.object({
   role: z.enum(["admin", "editor", "viewer"]),
 });
 
-export type CreateUserInput = z.infer<typeof createUserSchema>;
-
-// dado externo (body de request, formulário) chega como unknown
-export const parseCreateUser = (payload: unknown): CreateUserInput =>
-  createUserSchema.parse(payload);
-
 export const updateUserSchema = createUserSchema
   .pick({ name: true, role: true })
   .extend({ active: z.boolean().optional() })
   .partial();
 
-export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+type ParsedBody<T> = { success: true; data: T } | { success: false; message: string };
+
+// body de request chega como texto: JSON.parse devolve unknown e só o safeParse garante o tipo
+export const parseBody = <S extends z.ZodType>(
+  schema: S,
+  body: string,
+): ParsedBody<z.infer<S>> => {
+  let payload: unknown;
+
+  try {
+    payload = JSON.parse(body);
+  } catch {
+    return { success: false, message: "Body não é um JSON válido." };
+  }
+
+  const result = schema.safeParse(payload);
+
+  if (!result.success) {
+    const message = result.error.issues
+      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+      .join("; ");
+    return { success: false, message };
+  }
+
+  return { success: true, data: result.data };
+};

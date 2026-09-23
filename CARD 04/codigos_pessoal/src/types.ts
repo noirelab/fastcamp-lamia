@@ -21,5 +21,3 @@ export type ApiResponse<T> = {
 };
 
 export type UserSummary = Pick<UserProps, "id" | "name" | "role">;
-
-export type UserPatch = Partial<Omit<UserProps, "id" | "email">>;
