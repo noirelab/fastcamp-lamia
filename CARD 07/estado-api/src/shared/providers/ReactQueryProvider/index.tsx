@@ -14,11 +14,11 @@ export const ReactQueryProvider = ({ children }: { children: ReactNode }) => {
       }),
   );
 
-  // qualquer logout (botão Sair ou 401 no interceptor) descarta o cache do usuário anterior
+  // qualquer logout (botão Sair ou 401 no interceptor) zera o cache do usuário anterior e rebusca o que está na tela
   useEffect(
     () =>
       useUserStore.subscribe((state, previous) => {
-        if (previous.user && !state.user) queryClient.clear();
+        if (previous.user && !state.user) void queryClient.resetQueries();
       }),
     [queryClient],
   );
