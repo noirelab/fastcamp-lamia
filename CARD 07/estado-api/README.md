@@ -21,10 +21,11 @@ A API pública (JSONPlaceholder) não tem endpoint de autenticação, então, co
 
 ```bash
 pnpm install
+cp .env.example .env.local
 pnpm dev
 ```
 
-Use `.env.example` como referência para configurar `NEXT_PUBLIC_API_URL` e `NEXT_PUBLIC_USE_MOCK_AUTH`.
+`NEXT_PUBLIC_API_URL` é obrigatória e não tem valor padrão no código. Sem ela, toda requisição falha com a mensagem "NEXT_PUBLIC_API_URL não definida" e a lista de posts mostra erro. Como é variável `NEXT_PUBLIC_`, o Next embute o valor no build: mudou o `.env.local`, reinicie o `pnpm dev` ou rode o build de novo. `NEXT_PUBLIC_USE_MOCK_AUTH` liga o login simulado.
 
 ## Verificar
 

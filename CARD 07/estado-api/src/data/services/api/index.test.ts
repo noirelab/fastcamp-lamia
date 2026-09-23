@@ -32,4 +32,8 @@ describe("api", () => {
     expect(getToken()).toBeNull();
     expect(useUserStore.getState().user).toBeNull();
   });
+
+  it("falha com mensagem clara quando NEXT_PUBLIC_API_URL não está definida", async () => {
+    await expect(api.get("/posts", { baseURL: "" })).rejects.toThrow("NEXT_PUBLIC_API_URL");
+  });
 });
