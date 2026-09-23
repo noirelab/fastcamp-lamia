@@ -14,4 +14,4 @@ Arquivos:
 
 Como rodar:
 
-`pnpm install`, depois `pnpm typecheck`, `pnpm demo:utility` ou `pnpm demo:auth`.
+`pnpm install`, depois `pnpm typecheck`, `pnpm demo:functions`, `pnpm demo:utility` ou `pnpm demo:auth`.

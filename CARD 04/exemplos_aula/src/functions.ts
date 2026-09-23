@@ -15,3 +15,6 @@ const value = sum(2, 3);
 const log = (message: string): void => {
   console.log(message);
 };
+
+log(`soma: ${value}`);
+log(`subtracao: ${sub(5, 2)}`);

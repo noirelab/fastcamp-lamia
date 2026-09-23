@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc",
+    "demo:functions": "tsx src/functions.ts",
     "demo:utility": "tsx src/utility-types.ts",
     "demo:auth": "tsx src/modules/auth/service.ts"
   },
