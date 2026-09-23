@@ -1,16 +1,13 @@
-# Card 04: códigos da aula (TypeScript)
+# Card 04: códigos da aula
 
-Versão dos exemplos feitos acompanhando as aulas do card 04.
+Exemplos de TypeScript feitos acompanhando as aulas: tipos primitivos, arrays e tuplas, enum, funções, objetos (type, interface, union e intersection), classes, generics e utility types. Cada arquivo em src/ roda sozinho.
 
-Arquivos:
+## Como rodar
 
-- `src/index.ts`: primitivos, arrays, tuplas, enum
-- `src/functions.ts`: funções tipadas
-- `src/objects.ts`: objetos, interface vs type, interseção e union
-- `src/classes.ts`: classes, herança e parameter properties
-- `src/generics.ts`: generics
-- `src/utility-types.ts`: Partial, Pick, Omit, Record
+```bash
+pnpm install
+pnpm typecheck
+pnpm demo:index
+```
 
-Como rodar:
-
-`pnpm install`, depois `pnpm typecheck` e as demos: `pnpm demo:index`, `pnpm demo:functions`, `pnpm demo:objects`, `pnpm demo:classes`, `pnpm demo:generics` ou `pnpm demo:utility`.
+As outras demos seguem o mesmo padrão: `demo:functions`, `demo:objects`, `demo:classes`, `demo:generics` e `demo:utility`.
