@@ -7,10 +7,10 @@ interface Product {
 }
 
 // Pick: pega campos
-type ProductSummary = Pick<Product, 'id' | 'name' | 'price'>;
+type ProductSummary = Pick<Product, "id" | "name" | "price">;
 
 // Omit: tudo menos o id
-type ProductInput = Omit<Product, 'id'>;
+type ProductInput = Omit<Product, "id">;
 
 // Partial: tudo opcional
 type ProductPatch = Partial<ProductInput>;
@@ -19,17 +19,17 @@ type ProductPatch = Partial<ProductInput>;
 type ProductCatalog = Record<string, ProductSummary>;
 
 const input: ProductInput = {
-  name: 'Teclado',
+  name: "Teclado",
   price: 150,
-  description: 'Teclado mecânico ABNT2',
+  description: "Teclado mecânico ABNT2",
   stock: 10,
 };
 
 const patch: ProductPatch = { price: 139.9, stock: 8 };
 
 const catalog: ProductCatalog = {
-  '1': {
-    id: '1',
+  "1": {
+    id: "1",
     name: input.name,
     price: patch.price ?? input.price,
   },
