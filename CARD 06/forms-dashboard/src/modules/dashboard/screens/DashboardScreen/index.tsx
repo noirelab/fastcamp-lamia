@@ -13,7 +13,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { fetchDashboardData, type DashboardData } from "@/modules/dashboard/data/mock";
+import { MetricForm } from "@/modules/dashboard/components/MetricForm";
+import {
+  fetchDashboardData,
+  type DashboardData,
+  type SeasonMetric,
+} from "@/modules/dashboard/data/mock";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 
 const ALL_TEAMS = "all";
@@ -36,6 +41,7 @@ export const DashboardScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(ALL_TEAMS);
+  const [customMetrics, setCustomMetrics] = useState<SeasonMetric[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,6 +70,14 @@ export const DashboardScreen = () => {
     } finally {
       setIsRefreshing(false);
     }
+  };
+
+  const handleAddMetric = (metric: SeasonMetric) => {
+    setCustomMetrics((current) => [...current, metric]);
+  };
+
+  const handleRemoveMetric = (metric: SeasonMetric) => {
+    setCustomMetrics((current) => current.filter((item) => item !== metric));
   };
 
   const teams = useMemo(
@@ -147,14 +161,41 @@ export const DashboardScreen = () => {
       )}
 
       <div className="grid gap-4 md:grid-cols-3">
-        {data.seasonMetrics.map((metric) => (
-          <article key={metric.label} className="rounded border bg-white p-5 shadow-sm">
-            <p className="text-sm font-semibold text-gray-600">{metric.label}</p>
-            <p className="mt-3 text-4xl font-bold text-blue-700">{formatNumber(metric.value)}</p>
-            <p className="mt-2 text-sm text-gray-600">{metric.caption}</p>
-          </article>
-        ))}
+        {[...data.seasonMetrics, ...customMetrics].map((metric, index) => {
+          const isCustom = customMetrics.includes(metric);
+
+          return (
+            <article
+              key={`${metric.label}-${index}`}
+              className="rounded border bg-white p-5 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-semibold text-gray-600">{metric.label}</p>
+                {isCustom && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMetric(metric)}
+                    aria-label={`Remover métrica ${metric.label}`}
+                    className="text-xs font-semibold text-gray-500 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                  >
+                    Remover
+                  </button>
+                )}
+              </div>
+              <p className="mt-3 text-4xl font-bold text-blue-700">{formatNumber(metric.value)}</p>
+              <p className="mt-2 text-sm text-gray-600">{metric.caption}</p>
+            </article>
+          );
+        })}
       </div>
+
+      <article className="rounded border bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900">Adicionar métrica</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          A métrica entra no painel assim que o formulário é enviado.
+        </p>
+        <MetricForm onAddMetric={handleAddMetric} />
+      </article>
 
       <article className="rounded border bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

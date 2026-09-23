@@ -11,6 +11,7 @@ Mini-dashboard da temporada 2021 de Fórmula 1, feito com Next.js, TypeScript e 
 - Mensagens de erro visíveis e acessíveis abaixo de cada campo.
 - Estados de carregamento e botões desabilitados durante o submit.
 - Dashboard em `/dashboard` com métricas derivadas da classificação, gráfico de barras de pontos por piloto (recharts), filtro por equipe que refiltra lista e gráfico, gráfico de linhas da evolução dos líderes e atualização que recarrega os dados via `fetchDashboardData`.
+- Formulário de métrica no dashboard (react-hook-form + Zod) que adiciona e remove métricas do painel na hora.
 - Perfil em `/perfil` com validação do nome pelo mesmo padrão dos formulários.
 
 As ações de login, cadastro e atualização do dashboard são simulações locais; não existe backend ou autenticação real. O `fetchDashboardData` simula um endpoint: cada chamada devolve cópias novas do mesmo payload mock.
