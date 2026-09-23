@@ -4,8 +4,8 @@ import { SiteFooter } from "@/shared/components/SiteFooter";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "F1 2021 - Mini Blog",
-  description: "Posts simples sobre a temporada 2021 da Fórmula 1.",
+  title: "F1 - Mini Blog",
+  description: "Notícias sobre Fórmula 1 buscadas na Hacker News.",
 };
 
 interface RootLayoutProps {

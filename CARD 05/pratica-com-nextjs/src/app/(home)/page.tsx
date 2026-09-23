@@ -3,7 +3,7 @@ import { fetchArticles } from "@/modules/blog/data/services/articles";
 import { HomeScreen } from "@/modules/blog/screens/HomeScreen";
 
 export const metadata: Metadata = {
-  title: "Notícias | F1 2021 - Mini Blog",
+  title: "Notícias | F1 - Mini Blog",
 };
 
 export default async function HomePage() {

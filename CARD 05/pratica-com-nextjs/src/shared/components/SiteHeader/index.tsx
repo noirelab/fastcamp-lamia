@@ -17,7 +17,7 @@ export const SiteHeader = async () => {
           href="/"
           className="text-xl font-bold text-gray-900 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
-          F1 2021 - Mini Blog
+          F1 - Mini Blog
         </Link>
 
         <nav
