@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LinkButton } from "@/shared/components/LinkButton";
 import { PageShell } from "@/shared/components/PageShell";
 
 export const HomeScreen = () => {
@@ -8,10 +8,14 @@ export const HomeScreen = () => {
         <div>
           <p className="text-sm font-semibold text-blue-600">Fórmula 1</p>
           <h1 className="mt-3 text-4xl font-bold">Temporada 2021</h1>
-          <p className="mt-3 max-w-2xl leading-7 text-gray-600">Acompanhe dados simples dos pilotos e construtores da temporada 2021.</p>
+          <p className="mt-3 max-w-2xl leading-7 text-gray-600">
+            Acompanhe dados simples dos pilotos e construtores da temporada 2021.
+          </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/cadastro" className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Criar conta</Link>
-            <Link href="/dashboard" className="rounded border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Ver dashboard</Link>
+            <LinkButton href="/cadastro">Criar conta</LinkButton>
+            <LinkButton href="/dashboard" variant="secondary">
+              Ver dashboard
+            </LinkButton>
           </div>
         </div>
       </section>

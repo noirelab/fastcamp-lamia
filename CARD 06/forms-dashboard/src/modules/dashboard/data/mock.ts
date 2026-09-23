@@ -28,6 +28,7 @@ export interface DashboardData {
   driverStandings: DriverStanding[];
   lastRaces: RaceResult[];
   seasonChampion: SeasonChampion;
+  updatedAt: string;
 }
 
 const seasonChampion: SeasonChampion = {
@@ -62,16 +63,34 @@ const lastRaces: RaceResult[] = [
   { name: "GP do Catar", winner: "Lewis Hamilton" },
 ];
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number, signal?: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Requisição cancelada", "AbortError"));
+      return;
+    }
 
-// simula a chamada de um endpoint que devolve os dados da temporada
-export const fetchDashboardData = async (): Promise<DashboardData> => {
-  await delay(600);
+    const timeout = setTimeout(resolve, ms);
+
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timeout);
+        reject(new DOMException("Requisição cancelada", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+
+// simula um endpoint: o payload mock é fixo, mas cada chamada devolve cópias novas
+export const fetchDashboardData = async (signal?: AbortSignal): Promise<DashboardData> => {
+  await delay(600, signal);
 
   return {
-    seasonMetrics,
-    driverStandings,
-    lastRaces,
-    seasonChampion,
+    seasonMetrics: seasonMetrics.map((metric) => ({ ...metric })),
+    driverStandings: driverStandings.map((standing) => ({ ...standing })),
+    lastRaces: lastRaces.map((race) => ({ ...race })),
+    seasonChampion: { ...seasonChampion },
+    updatedAt: new Date().toISOString(),
   };
 };

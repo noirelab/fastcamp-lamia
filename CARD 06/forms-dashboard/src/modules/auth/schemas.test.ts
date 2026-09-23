@@ -44,6 +44,12 @@ describe("registerSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("recusa nome só com espaços", () => {
+    const result = registerSchema.safeParse({ ...validRegister, name: "   " });
+
+    expect(result.success).toBe(false);
+  });
+
   it("aponta a confirmação de senha quando as senhas são diferentes", () => {
     const result = registerSchema.safeParse({
       ...validRegister,

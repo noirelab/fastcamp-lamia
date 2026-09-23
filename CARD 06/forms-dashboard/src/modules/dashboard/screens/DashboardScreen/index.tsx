@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -17,37 +17,48 @@ const ALL_TEAMS = "all";
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR");
 
-const formatTime = (date: Date) =>
-  date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+const formatTime = (isoDate: string) =>
+  new Date(isoDate).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+const isAbortError = (error: unknown) =>
+  error instanceof DOMException && error.name === "AbortError";
 
 export const DashboardScreen = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(ALL_TEAMS);
-  const isMountedRef = useRef(true);
 
   useEffect(() => {
-    isMountedRef.current = true;
+    const controller = new AbortController();
 
-    fetchDashboardData().then((result) => {
-      if (!isMountedRef.current) return;
-      setData(result);
-      setUpdatedAt(new Date());
-    });
+    fetchDashboardData(controller.signal)
+      .then(setData)
+      .catch((loadError: unknown) => {
+        if (isAbortError(loadError)) return;
+        setError("Não foi possível carregar os dados da temporada.");
+      });
 
-    return () => {
-      isMountedRef.current = false;
-    };
+    return () => controller.abort();
   }, []);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    const result = await fetchDashboardData();
-    if (!isMountedRef.current) return;
-    setData(result);
-    setUpdatedAt(new Date());
-    setIsRefreshing(false);
+    setError(null);
+
+    try {
+      const result = await fetchDashboardData();
+      setData(result);
+    } catch (refreshError) {
+      if (!isAbortError(refreshError)) {
+        setError("Não foi possível atualizar os dados.");
+      }
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const teams = useMemo(
@@ -63,7 +74,26 @@ export const DashboardScreen = () => {
     [data, selectedTeam],
   );
 
+  const chartLabel = `Gráfico de barras com os pontos por piloto (${
+    selectedTeam === ALL_TEAMS ? "todas as equipes" : selectedTeam
+  })`;
+
   if (!data) {
+    if (error) {
+      return (
+        <section className="rounded border bg-white p-6 shadow-sm">
+          <div className="grid justify-items-start gap-3">
+            <p role="alert" className="text-red-600">
+              {error}
+            </p>
+            <PrimaryButton type="button" onClick={handleRefresh} disabled={isRefreshing}>
+              {isRefreshing ? "Tentando..." : "Tentar novamente"}
+            </PrimaryButton>
+          </div>
+        </section>
+      );
+    }
+
     return (
       <section className="rounded border bg-white p-6 shadow-sm">
         <p role="status" className="text-gray-600">
@@ -90,13 +120,17 @@ export const DashboardScreen = () => {
           <PrimaryButton type="button" onClick={handleRefresh} disabled={isRefreshing}>
             {isRefreshing ? "Atualizando..." : "Atualizar dados"}
           </PrimaryButton>
-          {updatedAt && (
-            <p role="status" className="text-xs text-gray-500">
-              Atualizado às {formatTime(updatedAt)}
-            </p>
-          )}
+          <p role="status" className="text-xs text-gray-500">
+            Atualizado às {formatTime(data.updatedAt)}
+          </p>
         </div>
       </header>
+
+      {error && (
+        <p role="alert" className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </p>
+      )}
 
       <div className="grid gap-4 md:grid-cols-3">
         {data.seasonMetrics.map((metric) => (
@@ -137,28 +171,30 @@ export const DashboardScreen = () => {
           </div>
         </div>
 
-        <div
-          role="img"
-          aria-label="Gráfico de barras com os pontos de cada piloto"
-          className="mt-6 h-80 w-full"
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={visibleStandings} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="driver"
-                interval={0}
-                angle={-25}
-                textAnchor="end"
-                height={70}
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="points" name="Pontos" fill="#1d4ed8" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {visibleStandings.length > 0 ? (
+          <div role="img" aria-label={chartLabel} className="mt-6 h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={visibleStandings} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="driver"
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={70}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="points" name="Pontos" fill="#1d4ed8" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <p className="mt-6 rounded bg-gray-50 p-5 text-gray-600">
+            Nenhum piloto encontrado para esta equipe.
+          </p>
+        )}
       </article>
 
       <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">

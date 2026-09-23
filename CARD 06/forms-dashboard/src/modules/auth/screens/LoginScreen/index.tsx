@@ -66,7 +66,9 @@ export const LoginScreen = () => {
         </PrimaryButton>
       </form>
 
-      {message && <p role="status" className="mt-4 text-sm text-green-700">{message}</p>}
+      <p role="status" className="mt-4 min-h-5 text-sm text-green-700">
+        {message}
+      </p>
 
       <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
         <Link

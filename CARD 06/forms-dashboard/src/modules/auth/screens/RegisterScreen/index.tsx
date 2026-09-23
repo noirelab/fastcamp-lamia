@@ -83,7 +83,9 @@ export const RegisterScreen = () => {
         </PrimaryButton>
       </form>
 
-      {message && <p role="status" className="mt-4 text-sm text-green-700">{message}</p>}
+      <p role="status" className="mt-4 min-h-5 text-sm text-green-700">
+        {message}
+      </p>
 
       <Link
         href="/login"
