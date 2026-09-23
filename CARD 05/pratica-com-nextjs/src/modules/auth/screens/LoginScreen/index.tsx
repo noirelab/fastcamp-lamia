@@ -3,15 +3,19 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import Link from "next/link";
+import { createSession } from "@/modules/auth/session";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
 export const LoginScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage("Login enviado.");
+    createSession();
+    setMessage(`Login enviado para ${email}.`);
   };
 
   return (
@@ -27,6 +31,8 @@ export const LoginScreen = () => {
           type="email"
           placeholder="voce@email.com"
           required
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
         />
         <TextField
           id="password"
@@ -35,6 +41,8 @@ export const LoginScreen = () => {
           type="password"
           placeholder="******"
           required
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
         />
         <PrimaryButton type="submit">Entrar</PrimaryButton>
       </form>
