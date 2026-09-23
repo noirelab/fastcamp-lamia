@@ -13,8 +13,6 @@ pnpm install
 pnpm dev
 ```
 
-O projeto não usa variáveis de ambiente (ver `.env.example`).
-
 ## Verificar
 
 ```bash
