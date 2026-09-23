@@ -3,12 +3,12 @@ import { z } from "zod";
 export const createUserSchema = z.object({
   name: z.string().trim().min(3, "Informe pelo menos 3 caracteres"),
   email: z.email("Informe um e-mail válido"),
-  role: z.enum(["admin", "editor", "viewer"]),
+  role: z.enum(["admin", "editor", "viewer"], "Papel deve ser admin, editor ou viewer"),
 });
 
 export const updateUserSchema = createUserSchema
   .pick({ name: true, role: true })
-  .extend({ active: z.boolean().optional() })
+  .extend({ active: z.boolean("Ativo deve ser true ou false").optional() })
   .partial();
 
 type ParsedBody<T> = { success: true; data: T } | { success: false; message: string };
