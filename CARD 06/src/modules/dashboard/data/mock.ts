@@ -30,20 +30,20 @@ export interface DashboardData {
   seasonChampion: SeasonChampion;
 }
 
-export const seasonChampion: SeasonChampion = {
+const seasonChampion: SeasonChampion = {
   driver: "Max Verstappen",
   team: "Red Bull Racing",
   points: 395.5,
   year: 2021,
 };
 
-export const seasonMetrics: SeasonMetric[] = [
+const seasonMetrics: SeasonMetric[] = [
   { label: "Vitórias", value: 10, caption: "Max Verstappen" },
   { label: "Pontos", value: 395.5, caption: "Campeão de 2021" },
   { label: "Construtores", value: 613.5, caption: "Mercedes" },
 ];
 
-export const driverStandings: DriverStanding[] = [
+const driverStandings: DriverStanding[] = [
   { position: 1, driver: "Max Verstappen", team: "Red Bull Racing", points: 395.5 },
   { position: 2, driver: "Lewis Hamilton", team: "Mercedes", points: 387.5 },
   { position: 3, driver: "Valtteri Bottas", team: "Mercedes", points: 226 },
@@ -56,7 +56,7 @@ export const driverStandings: DriverStanding[] = [
   { position: 10, driver: "Fernando Alonso", team: "Alpine", points: 81 },
 ];
 
-export const lastRaces: RaceResult[] = [
+const lastRaces: RaceResult[] = [
   { name: "GP de Abu Dhabi", winner: "Max Verstappen" },
   { name: "GP da Arábia Saudita", winner: "Lewis Hamilton" },
   { name: "GP do Catar", winner: "Lewis Hamilton" },
