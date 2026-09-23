@@ -5,9 +5,6 @@ export interface UserProps {
   role: 'admin' | 'user';
 }
 
-// type: union e intersection
-export type UserWithId = UserProps & { id: string };
-
 export type ApiResponse<T> = {
   data: T;
   success: boolean;
