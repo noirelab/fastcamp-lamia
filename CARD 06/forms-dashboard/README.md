@@ -1,20 +1,10 @@
 # Card 06 - Formulários e Dashboard de Fórmula 1
 
-Mini-dashboard da temporada 2021 de Fórmula 1, feito com Next.js, TypeScript e Tailwind CSS.
+Dashboard da temporada 2021 de Fórmula 1 em Next.js, com login, cadastro e perfil validados com react-hook-form e Zod. O dashboard tem gráficos com recharts, filtro por equipe e um formulário que adiciona métricas ao painel. Sessão e métricas ficam em stores Zustand salvas no localStorage.
 
-## O que tem
+Não há backend: o "Atualizar dados" chama um fetch simulado que libera a próxima corrida da temporada a cada clique, e as contas cadastradas ficam só no navegador (não use senha real).
 
-- Home em `/`.
-- Login em `/login` e cadastro em `/cadastro`, com validação tipada.
-- Schemas Zod em `src/modules/auth/schemas.ts` (`loginSchema` e `registerSchema`).
-- `react-hook-form` integrado com `zodResolver` nos dois formulários.
-- Mensagens de erro visíveis e acessíveis abaixo de cada campo.
-- Estados de carregamento e botões desabilitados durante o submit.
-- Dashboard em `/dashboard` com métricas derivadas da classificação, gráfico de barras de pontos por piloto (recharts), filtro por equipe que refiltra lista e gráfico, gráfico de linhas da evolução dos líderes e atualização que recarrega os dados via `fetchDashboardData`.
-- Formulário de métrica no dashboard (react-hook-form + Zod) que adiciona e remove métricas do painel na hora.
-- Perfil em `/perfil` com validação do nome pelo mesmo padrão dos formulários.
-
-As ações de login, cadastro e atualização do dashboard são simulações locais; não existe backend ou autenticação real. O `fetchDashboardData` simula um endpoint: cada chamada devolve cópias novas do mesmo payload mock.
+Conta de demonstração: `piloto@f1.com` / `senha123`.
 
 ## Rodar
 
@@ -23,10 +13,12 @@ pnpm install
 pnpm dev
 ```
 
+O projeto não usa variáveis de ambiente (ver `.env.example`).
+
 ## Verificar
 
 ```bash
 pnpm lint
-pnpm build
 pnpm test
+pnpm build
 ```
