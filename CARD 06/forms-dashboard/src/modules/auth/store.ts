@@ -69,7 +69,9 @@ export const useAuthStore = create<AuthStore>()(
 
           return {
             user: { ...state.user, name },
-            accounts: state.accounts.map((item) => (item.email === email ? { ...item, name } : item)),
+            accounts: state.accounts.map((item) =>
+              item.email === email ? { ...item, name } : item,
+            ),
           };
         }),
     }),

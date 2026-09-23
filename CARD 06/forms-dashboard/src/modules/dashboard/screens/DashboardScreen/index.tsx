@@ -78,7 +78,8 @@ export const DashboardScreen = () => {
   };
 
   const teams = useMemo(
-    () => Array.from(new Set((data?.driverStandings ?? []).map((standing) => standing.team))).sort(),
+    () =>
+      Array.from(new Set((data?.driverStandings ?? []).map((standing) => standing.team))).sort(),
     [data],
   );
 
@@ -167,7 +168,10 @@ export const DashboardScreen = () => {
       </header>
 
       {error && (
-        <p role="alert" className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p
+          role="alert"
+          className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
           {error}
         </p>
       )}
@@ -204,9 +208,7 @@ export const DashboardScreen = () => {
 
       <article className="rounded border bg-white p-6 shadow-sm">
         <h2 className="text-xl font-bold text-gray-900">Evolução dos líderes</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Pontos acumulados até a rodada {data.round}
-        </p>
+        <p className="mt-1 text-sm text-gray-600">Pontos acumulados até a rodada {data.round}</p>
 
         <div
           role="img"

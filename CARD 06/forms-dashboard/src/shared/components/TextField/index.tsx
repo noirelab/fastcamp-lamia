@@ -6,13 +6,7 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-export const TextField = ({
-  id,
-  label,
-  error,
-  className = "",
-  ...props
-}: TextFieldProps) => {
+export const TextField = ({ id, label, error, className = "", ...props }: TextFieldProps) => {
   const errorId = `${id}-error`;
 
   return (

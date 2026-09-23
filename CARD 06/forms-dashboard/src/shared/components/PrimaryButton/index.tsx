@@ -4,11 +4,7 @@ interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-export const PrimaryButton = ({
-  children,
-  className = "",
-  ...props
-}: PrimaryButtonProps) => {
+export const PrimaryButton = ({ children, className = "", ...props }: PrimaryButtonProps) => {
   return (
     <button
       {...props}

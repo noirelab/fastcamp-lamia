@@ -10,11 +10,7 @@ const variantClasses = {
   secondary: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
 };
 
-export const LinkButton = ({
-  variant = "primary",
-  className = "",
-  ...props
-}: LinkButtonProps) => {
+export const LinkButton = ({ variant = "primary", className = "", ...props }: LinkButtonProps) => {
   return (
     <Link
       {...props}

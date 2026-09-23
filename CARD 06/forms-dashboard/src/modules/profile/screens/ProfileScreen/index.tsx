@@ -29,12 +29,7 @@ export const ProfileScreen = () => {
       <p className="mt-2 text-gray-600">Troque seu nome</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4" noValidate>
-        <TextField
-          id="name"
-          label="Nome"
-          error={errors.name?.message}
-          {...register("name")}
-        />
+        <TextField id="name" label="Nome" error={errors.name?.message} {...register("name")} />
         <PrimaryButton type="submit">Salvar nome</PrimaryButton>
       </form>
 
