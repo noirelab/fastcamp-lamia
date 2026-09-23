@@ -1,9 +1,15 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { useUserStore } from "@/data/states/zustand/user";
 import { api } from "./index";
 import { getToken, setToken } from "./token";
 
+const defaultAdapter = api.defaults.adapter;
+
 describe("api", () => {
+  afterEach(() => {
+    api.defaults.adapter = defaultAdapter;
+  });
+
   beforeEach(() => {
     localStorage.clear();
     useUserStore.setState({ user: null });
