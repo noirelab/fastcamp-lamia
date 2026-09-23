@@ -24,7 +24,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // encerra a sessao inteira: token e usuario da store
+      // encerra a sessão inteira: token e usuario da store
       useUserStore.getState().logout();
     }
 

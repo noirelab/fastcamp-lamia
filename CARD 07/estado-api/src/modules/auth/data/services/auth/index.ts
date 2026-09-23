@@ -43,7 +43,7 @@ export class AuthService {
     } catch (error) {
       if (!isMockEligibleError(error)) throw error;
 
-      // o JSONPlaceholder nao tem /auth/login: simula a sessao para a demo
+      // o JSONPlaceholder não tem /auth/login: simula a sessão para a demo
       const user = { name: nameFromEmail(data.email), email: data.email };
       setToken(createMockToken());
       return user;

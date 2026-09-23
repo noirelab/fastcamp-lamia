@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PostsService } from "../../../services/posts";
+import { PostsService } from "@/modules/posts/data/services/posts";
 
 export const usePostsQuery = () => {
   return useQuery({
