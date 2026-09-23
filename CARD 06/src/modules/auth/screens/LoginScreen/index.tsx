@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { TextField } from "@/shared/components/TextField";
 export const LoginScreen = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const {
     register,
     handleSubmit,
@@ -19,13 +20,21 @@ export const LoginScreen = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: ILoginSchema) => {
-    setIsLoading(true);
-    setMessage("");
-    setTimeout(() => {
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const timeout = setTimeout(() => {
       setIsLoading(false);
-      setMessage(`Login enviado para ${data.email}.`);
+      setMessage(`Login enviado para ${submittedEmail}.`);
     }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, submittedEmail]);
+
+  const onSubmit = (data: ILoginSchema) => {
+    setMessage("");
+    setSubmittedEmail(data.email);
+    setIsLoading(true);
   };
 
   return (

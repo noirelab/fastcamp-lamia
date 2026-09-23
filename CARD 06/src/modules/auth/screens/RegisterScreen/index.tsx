@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { TextField } from "@/shared/components/TextField";
 export const RegisterScreen = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
   const {
     register,
     handleSubmit,
@@ -19,13 +20,21 @@ export const RegisterScreen = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: IRegisterSchema) => {
-    setIsLoading(true);
-    setMessage("");
-    setTimeout(() => {
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const timeout = setTimeout(() => {
       setIsLoading(false);
-      setMessage(`Cadastro de ${data.name} enviado.`);
+      setMessage(`Cadastro de ${submittedName} enviado.`);
     }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, submittedName]);
+
+  const onSubmit = (data: IRegisterSchema) => {
+    setMessage("");
+    setSubmittedName(data.name);
+    setIsLoading(true);
   };
 
   return (
