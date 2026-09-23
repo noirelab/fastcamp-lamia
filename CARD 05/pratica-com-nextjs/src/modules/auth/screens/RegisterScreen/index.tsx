@@ -6,15 +6,36 @@ import Link from "next/link";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
+const MIN_PASSWORD_LENGTH = 6;
+
 export const RegisterScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage(`Cadastro de ${name} enviado. Este é apenas um exemplo.`);
+
+    if (!name.trim()) {
+      setHasError(true);
+      setMessage("Informe seu nome.");
+      return;
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setHasError(true);
+      setMessage(
+        `A senha precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`,
+      );
+      return;
+    }
+
+    setHasError(false);
+    setMessage(
+      `Dados válidos: ${name.trim()} (${email}). A conta não é salva, este cadastro é só um exemplo.`,
+    );
   };
 
   return (
@@ -55,7 +76,14 @@ export const RegisterScreen = () => {
         <PrimaryButton type="submit">Cadastrar</PrimaryButton>
       </form>
 
-      {message && <p className="mt-4 text-sm text-green-700">{message}</p>}
+      {message && (
+        <p
+          role={hasError ? "alert" : "status"}
+          className={`mt-4 text-sm ${hasError ? "text-red-600" : "text-green-700"}`}
+        >
+          {message}
+        </p>
+      )}
 
       <Link
         href="/login"

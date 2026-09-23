@@ -17,9 +17,12 @@ export const LoginScreen = () => {
     event.preventDefault();
 
     try {
-      await loginAction();
-      setHasError(false);
-      setMessage(`Login enviado para ${email}.`);
+      const loggedIn = await loginAction(email.trim().toLowerCase(), password);
+
+      setHasError(!loggedIn);
+      setMessage(
+        loggedIn ? `Login feito como ${email}.` : "E-mail ou senha incorretos.",
+      );
     } catch {
       setHasError(true);
       setMessage("Não foi possível entrar. Tente novamente.");
