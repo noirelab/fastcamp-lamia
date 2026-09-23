@@ -4,7 +4,12 @@ import Button from "./components/Button";
 import Tasks from "./components/Tasks";
 import Title from "./components/Title";
 
-const TASKS_API_URL = "https://jsonplaceholder.typicode.com/todos?_limit=10";
+const TASKS_API_URL = import.meta.env.VITE_TASKS_API_URL;
+
+const isValidTodo = (todo) =>
+  typeof todo?.id === "number" &&
+  typeof todo.title === "string" &&
+  typeof todo.completed === "boolean";
 
 const loadTasks = () => {
   try {
@@ -44,6 +49,10 @@ function App() {
     setApiError("");
 
     try {
+      if (!TASKS_API_URL) {
+        throw new Error("Defina VITE_TASKS_API_URL no .env (veja o .env.example).");
+      }
+
       const response = await fetch(TASKS_API_URL);
 
       if (!response.ok) {
@@ -52,14 +61,23 @@ function App() {
 
       const data = await response.json();
 
-      setTasks(
-        data.map((todo) => ({
-          id: todo.id,
-          title: todo.title,
-          description: "Tarefa importada da API.",
-          isCompleted: todo.completed,
-        }))
-      );
+      if (!Array.isArray(data)) {
+        throw new Error("A API respondeu num formato inesperado.");
+      }
+
+      const apiTasks = data.filter(isValidTodo).map((todo) => ({
+        id: todo.id,
+        title: todo.title,
+        description: "Tarefa importada da API.",
+        isCompleted: todo.completed,
+      }));
+
+      setTasks((currentTasks) => [
+        ...currentTasks,
+        ...apiTasks.filter(
+          (apiTask) => !currentTasks.some((task) => task.id === apiTask.id)
+        ),
+      ]);
     } catch (error) {
       setApiError(
         error instanceof Error ? error.message : "Erro ao carregar as tarefas."
