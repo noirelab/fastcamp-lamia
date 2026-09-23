@@ -2,15 +2,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { clearToken } from "@/data/services/api/token";
 import { createSafeStorage } from "@/data/states/zustand/storage";
-
-interface User {
-  name: string;
-  email: string;
-}
+import type { LoggedUser } from "@/modules/auth/data/schemas/login";
 
 interface UserStore {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: LoggedUser | null;
+  setUser: (user: LoggedUser | null) => void;
   logout: () => void;
 }
 
