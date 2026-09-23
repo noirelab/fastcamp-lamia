@@ -18,5 +18,3 @@ export const loginResponseSchema = z.object({
   token: z.string().min(1),
   user: loggedUserSchema,
 });
-
-export type LoginResponse = z.infer<typeof loginResponseSchema>;

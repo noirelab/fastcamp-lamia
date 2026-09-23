@@ -51,6 +51,14 @@ describe("AuthService.login", () => {
     expect(setToken).toHaveBeenCalled();
   });
 
+  it("recusa payload inválido antes de chamar a API", async () => {
+    await expect(
+      AuthService.login({ email: "sem-arroba", password: "123" }),
+    ).rejects.toThrow();
+
+    expect(mockedPost).not.toHaveBeenCalled();
+  });
+
   it("propaga outros erros em vez de simular login", async () => {
     mockedPost.mockRejectedValueOnce(serverError);
 

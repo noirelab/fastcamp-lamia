@@ -3,7 +3,7 @@ import { api } from "@/data/services/api";
 import { setToken } from "@/data/services/api/token";
 import {
   loginResponseSchema,
-  type ILoginSchema,
+  loginSchema,
   type LoggedUser,
 } from "@/modules/auth/data/schemas/login";
 
@@ -17,7 +17,10 @@ const isNotFoundError = (error: unknown) =>
   axios.isAxiosError(error) && error.response?.status === 404;
 
 export class AuthService {
-  static async login(data: ILoginSchema): Promise<LoggedUser> {
+  static async login(payload: unknown): Promise<LoggedUser> {
+    // valida a entrada em runtime antes de qualquer chamada
+    const data = loginSchema.parse(payload);
+
     try {
       const response = await api.post<unknown>("/auth/login", data);
       const { token, user } = loginResponseSchema.parse(response.data);
