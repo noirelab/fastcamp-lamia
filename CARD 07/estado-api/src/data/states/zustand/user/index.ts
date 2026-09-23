@@ -1,4 +1,9 @@
 import { create } from "zustand";
+import {
+  createJSONStorage,
+  persist,
+  type StateStorage,
+} from "zustand/middleware";
 import { clearToken } from "@/data/services/api/token";
 
 interface User {
@@ -12,11 +17,29 @@ interface UserStore {
   logout: () => void;
 }
 
-export const useUserStore = create<UserStore>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  logout: () => {
-    clearToken();
-    set({ user: null });
-  },
-}));
+const memoryStorage: StateStorage = {
+  getItem: () => null,
+  setItem: () => undefined,
+  removeItem: () => undefined,
+};
+
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      logout: () => {
+        clearToken();
+        set({ user: null });
+      },
+    }),
+    {
+      name: "user",
+      storage: createJSONStorage(() =>
+        typeof window === "undefined" ? memoryStorage : localStorage,
+      ),
+      partialize: (state) => ({ user: state.user }),
+      skipHydration: true,
+    },
+  ),
+);

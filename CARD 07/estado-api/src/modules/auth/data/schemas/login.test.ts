@@ -30,6 +30,14 @@ describe("loginSchema", () => {
   });
 });
 
+describe("loggedUserSchema", () => {
+  it("recusa usuário com e-mail inválido", () => {
+    const result = loggedUserSchema.safeParse({ name: "Piloto", email: "piloto" });
+
+    expect(result.success).toBe(false);
+  });
+});
+
 describe("loginResponseSchema", () => {
   it("aceita resposta com token e usuário", () => {
     const result = loginResponseSchema.safeParse({
@@ -48,8 +56,8 @@ describe("loginResponseSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("recusa usuário com e-mail inválido", () => {
-    const result = loggedUserSchema.safeParse({ name: "Piloto", email: "piloto" });
+  it("recusa resposta sem usuário", () => {
+    const result = loginResponseSchema.safeParse({ token: "abc123" });
 
     expect(result.success).toBe(false);
   });

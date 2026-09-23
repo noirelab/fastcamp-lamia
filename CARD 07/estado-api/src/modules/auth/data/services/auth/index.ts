@@ -13,8 +13,21 @@ const nameFromEmail = (email: string) =>
     .replace(/[._-]+/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-const isNotFoundError = (error: unknown) =>
-  axios.isAxiosError(error) && error.response?.status === 404;
+const USE_MOCK_AUTH = process.env.NEXT_PUBLIC_USE_MOCK_AUTH !== "false";
+
+const createMockToken = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `mock-token-${crypto.randomUUID()}`;
+  }
+
+  return `mock-token-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+};
+
+const isMockEligibleError = (error: unknown) =>
+  USE_MOCK_AUTH &&
+  axios.isAxiosError(error) &&
+  error.response?.status === 404 &&
+  Boolean(error.config?.url?.includes("/auth/login"));
 
 export class AuthService {
   static async login(payload: unknown): Promise<LoggedUser> {
@@ -28,11 +41,11 @@ export class AuthService {
       setToken(token);
       return user;
     } catch (error) {
-      if (!isNotFoundError(error)) throw error;
+      if (!isMockEligibleError(error)) throw error;
 
       // o JSONPlaceholder nao tem /auth/login: simula a sessao para a demo
       const user = { name: nameFromEmail(data.email), email: data.email };
-      setToken(`mock-token-${crypto.randomUUID()}`);
+      setToken(createMockToken());
       return user;
     }
   }

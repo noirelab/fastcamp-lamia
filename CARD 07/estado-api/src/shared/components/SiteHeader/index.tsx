@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "@/data/states/zustand/user";
 import { useLoginMutation } from "@/modules/auth/data/hooks/mutations/useLoginMutation";
 
@@ -11,7 +13,26 @@ const mockCredentials = {
 export const SiteHeader = () => {
   const user = useUserStore((state) => state.user);
   const logout = useUserStore((state) => state.logout);
-  const { mutate, isPending } = useLoginMutation();
+  const { mutate, isPending, isError } = useLoginMutation();
+  const queryClient = useQueryClient();
+  const statusRef = useRef<HTMLDivElement>(null);
+  const previousUserRef = useRef(user);
+
+  useEffect(() => {
+    void useUserStore.persist.rehydrate();
+  }, []);
+
+  useEffect(() => {
+    if (previousUserRef.current !== user) {
+      previousUserRef.current = user;
+      statusRef.current?.focus();
+    }
+  }, [user]);
+
+  const handleLogout = () => {
+    queryClient.clear();
+    logout();
+  };
 
   return (
     <header className="border-b bg-white">
@@ -21,13 +42,20 @@ export const SiteHeader = () => {
           <p className="text-sm text-gray-600">Zustand, TanStack Query e Axios</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div
+          ref={statusRef}
+          tabIndex={-1}
+          role="status"
+          aria-live="polite"
+          aria-busy={isPending}
+          className="flex items-center gap-3 focus:outline-none"
+        >
           {user ? (
             <>
               <p className="text-sm font-semibold text-gray-700">Olá, {user.name}</p>
               <button
                 type="button"
-                onClick={logout}
+                onClick={handleLogout}
                 className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
               >
                 Sair
@@ -45,6 +73,15 @@ export const SiteHeader = () => {
           )}
         </div>
       </div>
+
+      {isError && (
+        <p
+          role="alert"
+          className="border-t border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 sm:px-6"
+        >
+          Não foi possível entrar. Tente novamente.
+        </p>
+      )}
     </header>
   );
 };
