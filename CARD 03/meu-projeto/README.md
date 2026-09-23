@@ -13,11 +13,11 @@ Projeto base do FastCamp. É a partir daqui que os próximos cards são feitos.
 
 ## Rodando o projeto
 
-Precisa de Node 20+ e pnpm.
+Precisa de Node 20.9+ e pnpm.
 
 ```bash
 git clone https://github.com/noirelab/fastcamp-lamia.git
-cd fastcamp-lamia
+cd "fastcamp-lamia/CARD 03/meu-projeto"
 pnpm install
 cp .env.example .env.local
 pnpm dev
