@@ -11,3 +11,11 @@ fi
 if [ -d "CARD 04/codigos_pessoal/node_modules" ]; then
   (cd "CARD 04/codigos_pessoal" && pnpm typecheck)
 fi
+
+if [ -d "CARD 05/pratica-com-nextjs/node_modules" ]; then
+  (cd "CARD 05/pratica-com-nextjs" && pnpm lint)
+fi
+
+if [ -d "CARD 05/curso-react/node_modules" ]; then
+  (cd "CARD 05/curso-react" && pnpm lint)
+fi
