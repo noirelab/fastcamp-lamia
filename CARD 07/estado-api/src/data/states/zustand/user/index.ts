@@ -1,10 +1,7 @@
 import { create } from "zustand";
-import {
-  createJSONStorage,
-  persist,
-  type StateStorage,
-} from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { clearToken } from "@/data/services/api/token";
+import { createSafeStorage } from "@/data/states/zustand/storage";
 
 interface User {
   name: string;
@@ -16,12 +13,6 @@ interface UserStore {
   setUser: (user: User | null) => void;
   logout: () => void;
 }
-
-const memoryStorage: StateStorage = {
-  getItem: () => null,
-  setItem: () => undefined,
-  removeItem: () => undefined,
-};
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -35,9 +26,7 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: "user",
-      storage: createJSONStorage(() =>
-        typeof window === "undefined" ? memoryStorage : localStorage,
-      ),
+      storage: createSafeStorage(),
       partialize: (state) => ({ user: state.user }),
       skipHydration: true,
     },

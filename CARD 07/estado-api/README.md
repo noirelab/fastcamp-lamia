@@ -12,6 +12,7 @@ Dashboard educacional com Next.js, TypeScript, Zustand, TanStack Query e Axios.
 - Hook `usePostsQuery` com TanStack Query para listar posts da API pública.
 - Mutation `useLoginMutation` que grava o usuário na store ao entrar.
 - Store Zustand de usuário mockado em `src/data/states/zustand/user`, persistida no `localStorage` e reidratada no boot.
+- Store Zustand de posts (`readIds` / `favoriteIds`) que muda a lista na hora: marcar lido, favoritar, filtrar (todos/não lidos/lidos) e buscar por título.
 - Nome do usuário mostrado no header após entrar, com anúncio e foco para leitores de tela.
 
 A API pública (JSONPlaceholder) não tem endpoint de autenticação, então, com `NEXT_PUBLIC_USE_MOCK_AUTH` habilitado (padrão), o `AuthService` devolve um usuário mock quando o `POST /auth/login` responde 404. Outros erros (rede, 500) e 404 de outras rotas são propagados em vez de simulados. O 401 e o logout limpam token e usuário. As ações de login usam dados simulados; não existe backend real.
