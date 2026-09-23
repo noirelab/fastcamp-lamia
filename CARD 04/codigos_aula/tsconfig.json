@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* Linguagem e ambiente */
+    "target": "ES2016",
+
+    /* Modulos */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "rootDir": "./src",
+
+    /* Emit */
+    "noEmit": true,
+
+    /* Interop */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type checking */
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

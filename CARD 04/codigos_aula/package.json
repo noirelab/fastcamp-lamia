@@ -1,0 +1,19 @@
+{
+  "name": "codigos-aula-typescript",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc",
+    "demo:index": "tsx src/index.ts",
+    "demo:functions": "tsx src/functions.ts",
+    "demo:objects": "tsx src/objects.ts",
+    "demo:classes": "tsx src/classes.ts",
+    "demo:generics": "tsx src/generics.ts",
+    "demo:utility": "tsx src/utility-types.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
