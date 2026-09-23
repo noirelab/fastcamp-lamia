@@ -19,7 +19,7 @@ const people: [number, string][] = [
   [2, "Doe"],
 ];
 
-// intersec
+// union: valor pode ser um dos tipos
 const productId: string | number | boolean = false;
 
 // enum
