@@ -21,7 +21,7 @@ export interface SeasonRace extends RaceResult {
   points: Record<string, number>;
 }
 
-export interface SeasonChampion {
+export interface SeasonLeader {
   driver: string;
   team: string;
   points: number;
@@ -39,7 +39,7 @@ export interface DashboardData {
   seasonMetrics: SeasonMetric[];
   driverStandings: DriverStanding[];
   lastRaces: RaceResult[];
-  seasonChampion: SeasonChampion;
+  seasonLeader: SeasonLeader;
   evolutionDrivers: string[];
   pointsEvolution: EvolutionRound[];
 }
@@ -94,15 +94,14 @@ export const seasonRaces: SeasonRace[] = [
   race("GP de Abu Dhabi", VER, 395.5, 387.5, 226),
 ];
 
-const buildSeasonChampion = (standings: DriverStanding[]): SeasonChampion => {
-  const [leader] = [...standings].sort((a, b) => b.points - a.points);
+// líder do campeonato depois da última corrida liberada
+export const buildSeasonLeader = (races: SeasonRace[]): SeasonLeader => {
+  const [driver, points] = Object.entries(races[races.length - 1].points).sort(
+    (a, b) => b[1] - a[1],
+  )[0];
+  const team = driverStandings.find((standing) => standing.driver === driver)?.team ?? "";
 
-  return {
-    driver: leader.driver,
-    team: leader.team,
-    points: leader.points,
-    year: 2021,
-  };
+  return { driver, team, points, year: 2021 };
 };
 
 export const buildSeasonMetrics = (races: SeasonRace[]): SeasonMetric[] => {
@@ -163,7 +162,7 @@ export const fetchDashboardData = async (
       .slice(-3)
       .reverse()
       .map(({ name, winner }) => ({ name, winner })),
-    seasonChampion: buildSeasonChampion(standings),
+    seasonLeader: buildSeasonLeader(races),
     evolutionDrivers: [...evolutionDrivers],
     pointsEvolution: races.map((item, index) => ({
       round: `R${index + 1}`,

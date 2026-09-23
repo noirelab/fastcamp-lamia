@@ -141,7 +141,7 @@ export const DashboardScreen = () => {
         <div>
           <p className="text-sm font-semibold text-blue-600">Fórmula 1</p>
           <h1 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl">
-            Dashboard da temporada {data.seasonChampion.year}
+            Dashboard da temporada {data.seasonLeader.year}
           </h1>
           <p className="mt-2 max-w-xl leading-7 text-gray-600">
             Fonte simulada: um mock local que libera a próxima corrida de 2021 a cada atualização.
@@ -203,61 +203,6 @@ export const DashboardScreen = () => {
       </article>
 
       <article className="rounded border bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Classificação final: pontos por piloto</h2>
-            <p className="mt-1 text-sm text-gray-600">
-              {selectedTeam === ALL_TEAMS ? "Todas as equipes" : selectedTeam}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label htmlFor="team-filter" className="text-sm font-semibold text-gray-700">
-              Equipe
-            </label>
-            <select
-              id="team-filter"
-              value={selectedTeam}
-              onChange={(event) => setSelectedTeam(event.target.value)}
-              className="min-h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-            >
-              <option value={ALL_TEAMS}>Todas</option>
-              {teams.map((team) => (
-                <option key={team} value={team}>
-                  {team}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {visibleStandings.length > 0 ? (
-          <div role="img" aria-label={chartLabel} className="mt-6 h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={visibleStandings} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="driver"
-                  interval={0}
-                  angle={-25}
-                  textAnchor="end"
-                  height={70}
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Bar dataKey="points" name="Pontos" fill="#1d4ed8" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <p className="mt-6 rounded bg-gray-50 p-5 text-gray-600">
-            Nenhum piloto encontrado para esta equipe.
-          </p>
-        )}
-      </article>
-
-      <article className="rounded border bg-white p-6 shadow-sm">
         <h2 className="text-xl font-bold text-gray-900">Evolução dos líderes</h2>
         <p className="mt-1 text-sm text-gray-600">
           Pontos acumulados até a rodada {data.round}
@@ -292,7 +237,103 @@ export const DashboardScreen = () => {
 
       <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
         <article className="rounded border bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900">Classificação final de pilotos</h2>
+          <h2 className="text-xl font-bold text-gray-900">Últimas corridas</h2>
+          <ul className="mt-5 grid gap-3">
+            {data.lastRaces.map((race) => (
+              <li key={race.name} className="rounded bg-gray-50 p-4">
+                <p className="font-semibold text-gray-900">{race.name}</p>
+                <p className="mt-1 text-sm text-gray-600">1º {race.winner}</p>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="rounded border bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900">{isSeasonOver ? "Campeão" : "Líder"}</h2>
+          <div className="mt-5 rounded border bg-gray-50 p-5">
+            <p className="text-sm font-semibold text-blue-600">
+              {isSeasonOver
+                ? `Temporada ${data.seasonLeader.year}`
+                : `Após a rodada ${data.round} de ${data.totalRounds}`}
+            </p>
+            <p className="mt-2 text-lg font-bold">{data.seasonLeader.driver}</p>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              {formatNumber(data.seasonLeader.points)} pontos pela {data.seasonLeader.team}.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <section
+        aria-labelledby="final-standings"
+        className="grid gap-6 rounded border-2 border-dashed border-gray-300 p-4 sm:p-6"
+      >
+        <div>
+          <h2 id="final-standings" className="text-2xl font-bold text-gray-900">
+            Classificação final de {data.seasonLeader.year}
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Resultado ao fim das {data.totalRounds} rodadas. Não acompanha a rodada exibida acima.
+          </p>
+        </div>
+
+        <article className="rounded border bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Pontos por piloto</h3>
+              <p className="mt-1 text-sm text-gray-600">
+                {selectedTeam === ALL_TEAMS ? "Todas as equipes" : selectedTeam}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label htmlFor="team-filter" className="text-sm font-semibold text-gray-700">
+                Equipe
+              </label>
+              <select
+                id="team-filter"
+                value={selectedTeam}
+                onChange={(event) => setSelectedTeam(event.target.value)}
+                className="min-h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+              >
+                <option value={ALL_TEAMS}>Todas</option>
+                {teams.map((team) => (
+                  <option key={team} value={team}>
+                    {team}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {visibleStandings.length > 0 ? (
+            <div role="img" aria-label={chartLabel} className="mt-6 h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={visibleStandings} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="driver"
+                    interval={0}
+                    angle={-25}
+                    textAnchor="end"
+                    height={70}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip />
+                  <Bar dataKey="points" name="Pontos" fill="#1d4ed8" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <p className="mt-6 rounded bg-gray-50 p-5 text-gray-600">
+              Nenhum piloto encontrado para esta equipe.
+            </p>
+          )}
+        </article>
+
+        <article className="rounded border bg-white p-6 shadow-sm">
+          <h3 className="text-xl font-bold text-gray-900">Pilotos</h3>
           {visibleStandings.length > 0 ? (
             <ul className="mt-4 grid gap-2">
               {visibleStandings.map((standing) => (
@@ -312,30 +353,7 @@ export const DashboardScreen = () => {
             <p className="mt-4 text-gray-600">Nenhum piloto encontrado para esta equipe.</p>
           )}
         </article>
-
-        <article className="rounded border bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900">Campeão</h2>
-          <div className="mt-5 rounded border bg-gray-50 p-5">
-            <p className="text-sm font-semibold text-blue-600">Temporada {data.seasonChampion.year}</p>
-            <p className="mt-2 text-lg font-bold">{data.seasonChampion.driver}</p>
-            <p className="mt-2 text-sm leading-6 text-gray-600">
-              {formatNumber(data.seasonChampion.points)} pontos pela {data.seasonChampion.team}.
-            </p>
-          </div>
-        </article>
-      </div>
-
-      <article className="rounded border bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-900">Últimas corridas</h2>
-        <ul className="mt-5 grid gap-3">
-          {data.lastRaces.map((race) => (
-            <li key={race.name} className="rounded bg-gray-50 p-4">
-              <p className="font-semibold text-gray-900">{race.name}</p>
-              <p className="mt-1 text-sm text-gray-600">1º {race.winner}</p>
-            </li>
-          ))}
-        </ul>
-      </article>
+      </section>
     </section>
   );
 };
