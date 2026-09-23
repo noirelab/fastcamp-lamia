@@ -5,6 +5,6 @@ export interface Article {
   points: number;
   comments: number;
   date: string;
-  url: string;
+  url: string | null;
   content: string[];
 }

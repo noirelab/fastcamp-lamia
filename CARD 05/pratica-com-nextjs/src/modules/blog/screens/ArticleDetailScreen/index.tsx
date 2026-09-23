@@ -27,14 +27,16 @@ export const ArticleDetailScreen = ({ article }: ArticleDetailScreenProps) => {
           ))}
         </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          >
-            Abrir notícia original
-          </a>
+          {article.url && (
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              Abrir notícia original
+            </a>
+          )}
           <FavoriteButton slug={article.slug} title={article.title} />
         </div>
       </article>

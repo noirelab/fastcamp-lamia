@@ -43,7 +43,7 @@ const toArticle = (hit: HnHit & { title: string }): Article => ({
   points: hit.points ?? 0,
   comments: hit.num_comments ?? 0,
   date: formatDate(hit.created_at),
-  url: hit.url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`,
+  url: hit.url ?? null,
   content: hit.story_text
     ? [stripHtml(hit.story_text)]
     : [
