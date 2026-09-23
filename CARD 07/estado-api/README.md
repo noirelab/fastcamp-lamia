@@ -15,7 +15,7 @@ pnpm dev
 Variáveis de ambiente:
 
 - `NEXT_PUBLIC_API_URL`: endereço da API. Obrigatória, sem ela as requisições falham.
-- `NEXT_PUBLIC_USE_MOCK_AUTH`: `true` liga o login simulado.
+- `NEXT_PUBLIC_USE_MOCK_AUTH`: login simulado, ligado por padrão; só `false` desliga.
 
 ## Verificar
 
