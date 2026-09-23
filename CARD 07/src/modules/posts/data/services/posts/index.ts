@@ -1,14 +1,11 @@
 import { api } from "@/data/services/api";
-
-export interface Post {
-  id: number;
-  title: string;
-  body: string;
-}
+import { postsSchema, type Post } from "@/modules/posts/data/schemas/post";
 
 export class PostsService {
   static async getAll(): Promise<Post[]> {
-    const response = await api.get<Post[]>("/posts?_limit=8");
-    return response.data;
+    const response = await api.get<unknown>("/posts?_limit=8");
+
+    // valida o payload em runtime antes de entregar os dados tipados
+    return postsSchema.parse(response.data);
   }
 }

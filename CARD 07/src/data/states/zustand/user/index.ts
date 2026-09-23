@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { clearToken } from "@/data/services/api/token";
 
 interface User {
   name: string;
@@ -14,5 +15,8 @@ interface UserStore {
 export const useUserStore = create<UserStore>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
+  logout: () => {
+    clearToken();
+    set({ user: null });
+  },
 }));
