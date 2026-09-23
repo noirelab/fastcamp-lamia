@@ -5,6 +5,9 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -14,6 +17,8 @@ import { fetchDashboardData, type DashboardData } from "@/modules/dashboard/data
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 
 const ALL_TEAMS = "all";
+
+const LINE_COLORS = ["#1d4ed8", "#dc2626", "#059669", "#d97706"];
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR");
 
@@ -72,6 +77,15 @@ export const DashboardScreen = () => {
         (standing) => selectedTeam === ALL_TEAMS || standing.team === selectedTeam,
       ),
     [data, selectedTeam],
+  );
+
+  const evolutionData = useMemo(
+    () =>
+      (data?.pointsEvolution ?? []).map((entry) => ({
+        round: entry.round,
+        ...entry.points,
+      })),
+    [data],
   );
 
   const chartLabel = `Gráfico de barras com os pontos por piloto (${
@@ -195,6 +209,39 @@ export const DashboardScreen = () => {
             Nenhum piloto encontrado para esta equipe.
           </p>
         )}
+      </article>
+
+      <article className="rounded border bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900">Evolução dos líderes</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Pontos acumulados por rodada (série ilustrativa)
+        </p>
+
+        <div
+          role="img"
+          aria-label="Gráfico de linhas com a evolução de pontos dos líderes por rodada"
+          className="mt-6 h-80 w-full"
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={evolutionData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="round" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend />
+              {data.evolutionDrivers.map((driver, index) => (
+                <Line
+                  key={driver}
+                  type="monotone"
+                  dataKey={driver}
+                  stroke={LINE_COLORS[index % LINE_COLORS.length]}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </article>
 
       <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
