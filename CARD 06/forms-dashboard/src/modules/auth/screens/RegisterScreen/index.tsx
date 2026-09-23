@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { registerSchema, type IRegisterSchema } from "@/modules/auth/schemas";
+import { useAuthStore } from "@/modules/auth/store";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
 export const RegisterScreen = () => {
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [submittedName, setSubmittedName] = useState("");
+  const [error, setError] = useState("");
+  const registerAccount = useAuthStore((state) => state.register);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -20,21 +22,13 @@ export const RegisterScreen = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  useEffect(() => {
-    if (!isLoading) return;
-
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-      setMessage(`Cadastro de ${submittedName} enviado.`);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [isLoading, submittedName]);
-
   const onSubmit = (data: IRegisterSchema) => {
-    setMessage("");
-    setSubmittedName(data.name);
-    setIsLoading(true);
+    if (!registerAccount(data)) {
+      setError("Já existe uma conta com esse e-mail.");
+      return;
+    }
+
+    router.push("/dashboard");
   };
 
   return (
@@ -78,13 +72,11 @@ export const RegisterScreen = () => {
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
         />
-        <PrimaryButton type="submit" disabled={isLoading}>
-          {isLoading ? "Criando conta..." : "Criar conta"}
-        </PrimaryButton>
+        <PrimaryButton type="submit">Criar conta</PrimaryButton>
       </form>
 
-      <p role="status" className="mt-4 min-h-5 text-sm text-green-700">
-        {message}
+      <p role="alert" className="mt-4 min-h-5 text-sm text-red-600">
+        {error}
       </p>
 
       <Link

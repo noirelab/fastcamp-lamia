@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginSchema, type ILoginSchema } from "@/modules/auth/schemas";
+import { MOCK_ACCOUNT, useAuthStore } from "@/modules/auth/store";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
 export const LoginScreen = () => {
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [error, setError] = useState("");
+  const signIn = useAuthStore((state) => state.signIn);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -20,21 +22,13 @@ export const LoginScreen = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  useEffect(() => {
-    if (!isLoading) return;
-
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-      setMessage(`Login enviado para ${submittedEmail}.`);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [isLoading, submittedEmail]);
-
   const onSubmit = (data: ILoginSchema) => {
-    setMessage("");
-    setSubmittedEmail(data.email);
-    setIsLoading(true);
+    if (!signIn(data)) {
+      setError("E-mail ou senha incorretos.");
+      return;
+    }
+
+    router.push("/dashboard");
   };
 
   return (
@@ -61,13 +55,15 @@ export const LoginScreen = () => {
           error={errors.password?.message}
           {...register("password")}
         />
-        <PrimaryButton type="submit" disabled={isLoading}>
-          {isLoading ? "Entrando..." : "Entrar"}
-        </PrimaryButton>
+        <PrimaryButton type="submit">Entrar</PrimaryButton>
       </form>
 
-      <p role="status" className="mt-4 min-h-5 text-sm text-green-700">
-        {message}
+      <p role="alert" className="mt-4 min-h-5 text-sm text-red-600">
+        {error}
+      </p>
+
+      <p className="mt-2 text-sm text-gray-600">
+        Conta de demonstração: {MOCK_ACCOUNT.email} / {MOCK_ACCOUNT.password}
       </p>
 
       <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
@@ -76,12 +72,6 @@ export const LoginScreen = () => {
           className="text-blue-600 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           Criar uma conta
-        </Link>
-        <Link
-          href="/dashboard"
-          className="text-blue-600 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          Ver dashboard de exemplo
         </Link>
       </div>
     </section>

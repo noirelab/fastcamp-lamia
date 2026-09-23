@@ -1,31 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useAuthStore } from "@/modules/auth/store";
+import { profileSchema, type IProfileSchema } from "@/modules/profile/schemas";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
-const profileSchema = z.object({
-  name: z.string().trim().min(1, "Informe um nome"),
-});
-
-type ProfileForm = z.infer<typeof profileSchema>;
-
 export const ProfileScreen = () => {
-  const [savedName, setSavedName] = useState("Seu nome");
+  const user = useAuthStore((state) => state.user);
+  const updateName = useAuthStore((state) => state.updateName);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ProfileForm>({
+  } = useForm<IProfileSchema>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { name: "Seu nome" },
+    defaultValues: { name: user?.name ?? "" },
   });
 
-  const onSubmit = (data: ProfileForm) => {
-    setSavedName(data.name);
+  const onSubmit = (data: IProfileSchema) => {
+    updateName(data.name);
   };
 
   return (
@@ -44,7 +39,7 @@ export const ProfileScreen = () => {
       </form>
 
       <p role="status" className="mt-5 rounded bg-gray-100 p-3 text-sm text-gray-700">
-        Nome salvo: <strong>{savedName}</strong>
+        Nome salvo: <strong>{user?.name}</strong> ({user?.email})
       </p>
     </section>
   );
