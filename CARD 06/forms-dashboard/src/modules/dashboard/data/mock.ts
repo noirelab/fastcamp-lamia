@@ -16,9 +16,9 @@ export interface RaceResult {
   winner: string;
 }
 
-export interface RaceWinner {
-  race: string;
-  winner: string;
+export interface SeasonRace extends RaceResult {
+  // pontos acumulados dos líderes depois da corrida
+  points: Record<string, number>;
 }
 
 export interface SeasonChampion {
@@ -34,13 +34,14 @@ export interface EvolutionRound {
 }
 
 export interface DashboardData {
+  round: number;
+  totalRounds: number;
   seasonMetrics: SeasonMetric[];
   driverStandings: DriverStanding[];
   lastRaces: RaceResult[];
   seasonChampion: SeasonChampion;
   evolutionDrivers: string[];
   pointsEvolution: EvolutionRound[];
-  updatedAt: string;
 }
 
 const driverStandings: DriverStanding[] = [
@@ -56,65 +57,41 @@ const driverStandings: DriverStanding[] = [
   { position: 10, driver: "Fernando Alonso", team: "Alpine", points: 81 },
 ];
 
-const lastRaces: RaceResult[] = [
-  { name: "GP de Abu Dhabi", winner: "Max Verstappen" },
-  { name: "GP da Arábia Saudita", winner: "Lewis Hamilton" },
-  { name: "GP do Catar", winner: "Lewis Hamilton" },
-];
+const VER = "Max Verstappen";
+const HAM = "Lewis Hamilton";
+const BOT = "Valtteri Bottas";
 
-const raceWinners: RaceWinner[] = [
-  { race: "GP do Bahrein", winner: "Lewis Hamilton" },
-  { race: "GP da Emília-Romanha", winner: "Max Verstappen" },
-  { race: "GP de Portugal", winner: "Lewis Hamilton" },
-  { race: "GP da Espanha", winner: "Lewis Hamilton" },
-  { race: "GP de Mônaco", winner: "Max Verstappen" },
-  { race: "GP do Azerbaijão", winner: "Sergio Pérez" },
-  { race: "GP da França", winner: "Max Verstappen" },
-  { race: "GP da Estíria", winner: "Max Verstappen" },
-  { race: "GP da Áustria", winner: "Max Verstappen" },
-  { race: "GP da Grã-Bretanha", winner: "Lewis Hamilton" },
-  { race: "GP da Hungria", winner: "Esteban Ocon" },
-  { race: "GP da Bélgica", winner: "Max Verstappen" },
-  { race: "GP da Holanda", winner: "Max Verstappen" },
-  { race: "GP da Itália", winner: "Daniel Ricciardo" },
-  { race: "GP da Rússia", winner: "Lewis Hamilton" },
-  { race: "GP da Turquia", winner: "Valtteri Bottas" },
-  { race: "GP dos Estados Unidos", winner: "Max Verstappen" },
-  { race: "GP do México", winner: "Max Verstappen" },
-  { race: "GP do Brasil", winner: "Lewis Hamilton" },
-  { race: "GP do Catar", winner: "Lewis Hamilton" },
-  { race: "GP da Arábia Saudita", winner: "Lewis Hamilton" },
-  { race: "GP de Abu Dhabi", winner: "Max Verstappen" },
-];
+const evolutionDrivers = [VER, HAM, BOT];
 
-const evolutionDrivers = ["Max Verstappen", "Lewis Hamilton", "Valtteri Bottas"];
+const race = (name: string, winner: string, ver: number, ham: number, bot: number): SeasonRace => ({
+  name,
+  winner,
+  points: { [VER]: ver, [HAM]: ham, [BOT]: bot },
+});
 
-// série ilustrativa: só os totais finais batem com a classificação
-const pointsEvolution: EvolutionRound[] = [
-  {
-    round: "R5",
-    points: { "Max Verstappen": 105, "Lewis Hamilton": 101, "Valtteri Bottas": 47 },
-  },
-  {
-    round: "R10",
-    points: { "Max Verstappen": 185, "Lewis Hamilton": 177, "Valtteri Bottas": 108 },
-  },
-  {
-    round: "R15",
-    points: { "Max Verstappen": 244.5, "Lewis Hamilton": 246.5, "Valtteri Bottas": 151 },
-  },
-  {
-    round: "R19",
-    points: { "Max Verstappen": 332.5, "Lewis Hamilton": 318.5, "Valtteri Bottas": 203 },
-  },
-  {
-    round: "R21",
-    points: { "Max Verstappen": 369.5, "Lewis Hamilton": 369.5, "Valtteri Bottas": 218 },
-  },
-  {
-    round: "R22",
-    points: { "Max Verstappen": 395.5, "Lewis Hamilton": 387.5, "Valtteri Bottas": 226 },
-  },
+export const seasonRaces: SeasonRace[] = [
+  race("GP do Bahrein", HAM, 18, 25, 16),
+  race("GP da Emília-Romanha", VER, 43, 44, 16),
+  race("GP de Portugal", HAM, 61, 69, 32),
+  race("GP da Espanha", HAM, 80, 94, 47),
+  race("GP de Mônaco", VER, 105, 101, 47),
+  race("GP do Azerbaijão", "Sergio Pérez", 105, 101, 47),
+  race("GP da França", VER, 131, 119, 59),
+  race("GP da Estíria", VER, 156, 138, 74),
+  race("GP da Áustria", VER, 182, 150, 92),
+  race("GP da Grã-Bretanha", HAM, 185, 177, 108),
+  race("GP da Hungria", "Esteban Ocon", 187, 195, 108),
+  race("GP da Bélgica", VER, 199.5, 202.5, 108),
+  race("GP da Holanda", VER, 224.5, 221.5, 123),
+  race("GP da Itália", "Daniel Ricciardo", 226.5, 221.5, 141),
+  race("GP da Rússia", HAM, 244.5, 246.5, 151),
+  race("GP da Turquia", BOT, 262.5, 256.5, 177),
+  race("GP dos Estados Unidos", VER, 287.5, 275.5, 185),
+  race("GP do México", VER, 312.5, 293.5, 185),
+  race("GP do Brasil", HAM, 332.5, 318.5, 203),
+  race("GP do Catar", HAM, 351.5, 343.5, 203),
+  race("GP da Arábia Saudita", HAM, 369.5, 369.5, 218),
+  race("GP de Abu Dhabi", VER, 395.5, 387.5, 226),
 ];
 
 const buildSeasonChampion = (standings: DriverStanding[]): SeasonChampion => {
@@ -128,26 +105,22 @@ const buildSeasonChampion = (standings: DriverStanding[]): SeasonChampion => {
   };
 };
 
-const buildSeasonMetrics = (
-  standings: DriverStanding[],
-  champion: SeasonChampion,
-): SeasonMetric[] => {
-  const wins = raceWinners.reduce<Record<string, number>>((acc, race) => {
-    acc[race.winner] = (acc[race.winner] ?? 0) + 1;
+export const buildSeasonMetrics = (races: SeasonRace[]): SeasonMetric[] => {
+  const wins = races.reduce<Record<string, number>>((acc, item) => {
+    acc[item.winner] = (acc[item.winner] ?? 0) + 1;
     return acc;
   }, {});
   const [topWinner, topWins] = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
 
-  const teamPoints = standings.reduce<Record<string, number>>((acc, standing) => {
-    acc[standing.team] = (acc[standing.team] ?? 0) + standing.points;
-    return acc;
-  }, {});
-  const [topTeam, topTeamPoints] = Object.entries(teamPoints).sort((a, b) => b[1] - a[1])[0];
+  const lastRace = races[races.length - 1];
+  const [[leader, leaderPoints], [second, secondPoints]] = Object.entries(lastRace.points).sort(
+    (a, b) => b[1] - a[1],
+  );
 
   return [
     { label: "Vitórias", value: topWins, caption: topWinner },
-    { label: "Pontos", value: champion.points, caption: `${champion.driver} (campeão)` },
-    { label: "Construtores", value: topTeamPoints, caption: topTeam },
+    { label: "Pontos do líder", value: leaderPoints, caption: `${leader} após o ${lastRace.name}` },
+    { label: "Vantagem", value: leaderPoints - secondPoints, caption: `sobre ${second}` },
   ];
 };
 
@@ -170,23 +143,31 @@ const delay = (ms: number, signal?: AbortSignal) =>
     );
   });
 
-// simula um endpoint: o payload mock é fixo, mas cada chamada devolve cópias novas
-export const fetchDashboardData = async (signal?: AbortSignal): Promise<DashboardData> => {
+// simula um endpoint que acompanha a temporada: devolve os dados até a rodada pedida
+export const fetchDashboardData = async (
+  round: number,
+  signal?: AbortSignal,
+): Promise<DashboardData> => {
   await delay(600, signal);
 
+  const current = Math.min(Math.max(round, 1), seasonRaces.length);
+  const races = seasonRaces.slice(0, current);
   const standings = driverStandings.map((standing) => ({ ...standing }));
-  const champion = buildSeasonChampion(standings);
 
   return {
-    seasonMetrics: buildSeasonMetrics(standings, champion),
+    round: current,
+    totalRounds: seasonRaces.length,
+    seasonMetrics: buildSeasonMetrics(races),
     driverStandings: standings,
-    lastRaces: lastRaces.map((race) => ({ ...race })),
-    seasonChampion: champion,
+    lastRaces: races
+      .slice(-3)
+      .reverse()
+      .map(({ name, winner }) => ({ name, winner })),
+    seasonChampion: buildSeasonChampion(standings),
     evolutionDrivers: [...evolutionDrivers],
-    pointsEvolution: pointsEvolution.map((entry) => ({
-      round: entry.round,
-      points: { ...entry.points },
+    pointsEvolution: races.map((item, index) => ({
+      round: `R${index + 1}`,
+      points: { ...item.points },
     })),
-    updatedAt: new Date().toISOString(),
   };
 };

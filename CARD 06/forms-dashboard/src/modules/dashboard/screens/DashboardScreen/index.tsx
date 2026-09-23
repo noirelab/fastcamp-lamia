@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -14,24 +14,17 @@ import {
   YAxis,
 } from "recharts";
 import { MetricForm } from "@/modules/dashboard/components/MetricForm";
-import {
-  fetchDashboardData,
-  type DashboardData,
-  type SeasonMetric,
-} from "@/modules/dashboard/data/mock";
+import { fetchDashboardData, type DashboardData } from "@/modules/dashboard/data/mock";
+import { useMetricsStore } from "@/modules/dashboard/store";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 
 const ALL_TEAMS = "all";
 
+const INITIAL_ROUND = 12;
+
 const LINE_COLORS = ["#1d4ed8", "#dc2626", "#059669", "#d97706"];
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR");
-
-const formatTime = (isoDate: string) =>
-  new Date(isoDate).toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
 const isAbortError = (error: unknown) =>
   error instanceof DOMException && error.name === "AbortError";
@@ -41,12 +34,15 @@ export const DashboardScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(ALL_TEAMS);
-  const [customMetrics, setCustomMetrics] = useState<SeasonMetric[]>([]);
+  const customMetrics = useMetricsStore((state) => state.customMetrics);
+  const addMetric = useMetricsStore((state) => state.addMetric);
+  const removeMetric = useMetricsStore((state) => state.removeMetric);
+  const refreshController = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchDashboardData(controller.signal)
+    fetchDashboardData(INITIAL_ROUND, controller.signal)
       .then(setData)
       .catch((loadError: unknown) => {
         if (isAbortError(loadError)) return;
@@ -56,28 +52,29 @@ export const DashboardScreen = () => {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => () => refreshController.current?.abort(), []);
+
   const handleRefresh = async () => {
+    refreshController.current?.abort();
+    const controller = new AbortController();
+    refreshController.current = controller;
+
     setIsRefreshing(true);
     setError(null);
 
     try {
-      const result = await fetchDashboardData();
+      const result = await fetchDashboardData(
+        data ? data.round + 1 : INITIAL_ROUND,
+        controller.signal,
+      );
       setData(result);
     } catch (refreshError) {
       if (!isAbortError(refreshError)) {
         setError("Não foi possível atualizar os dados.");
       }
     } finally {
-      setIsRefreshing(false);
+      if (!controller.signal.aborted) setIsRefreshing(false);
     }
-  };
-
-  const handleAddMetric = (metric: SeasonMetric) => {
-    setCustomMetrics((current) => [...current, metric]);
-  };
-
-  const handleRemoveMetric = (metric: SeasonMetric) => {
-    setCustomMetrics((current) => current.filter((item) => item !== metric));
   };
 
   const teams = useMemo(
@@ -131,6 +128,13 @@ export const DashboardScreen = () => {
     );
   }
 
+  const isSeasonOver = data.round === data.totalRounds;
+
+  const metricCards = [
+    ...data.seasonMetrics.map((metric) => ({ ...metric, id: metric.label, isCustom: false })),
+    ...customMetrics.map((metric) => ({ ...metric, isCustom: true })),
+  ];
+
   return (
     <section className="grid gap-6">
       <header className="flex flex-col gap-4 rounded border bg-white p-6 shadow-sm sm:flex-row sm:items-end sm:justify-between sm:p-8">
@@ -140,16 +144,24 @@ export const DashboardScreen = () => {
             Dashboard da temporada {data.seasonChampion.year}
           </h1>
           <p className="mt-2 max-w-xl leading-7 text-gray-600">
-            Dados mockados de pilotos, corridas e construtores.
+            Fonte simulada: um mock local que libera a próxima corrida de 2021 a cada atualização.
           </p>
         </div>
 
         <div className="flex flex-col gap-2 sm:items-end">
-          <PrimaryButton type="button" onClick={handleRefresh} disabled={isRefreshing}>
-            {isRefreshing ? "Atualizando..." : "Atualizar dados"}
+          <PrimaryButton
+            type="button"
+            onClick={handleRefresh}
+            disabled={isRefreshing || isSeasonOver}
+          >
+            {isRefreshing
+              ? "Atualizando..."
+              : isSeasonOver
+                ? "Temporada completa"
+                : "Atualizar dados"}
           </PrimaryButton>
           <p role="status" className="text-xs text-gray-500">
-            Atualizado às {formatTime(data.updatedAt)}
+            Rodada {data.round} de {data.totalRounds}: {data.lastRaces[0].name}
           </p>
         </div>
       </header>
@@ -161,46 +173,39 @@ export const DashboardScreen = () => {
       )}
 
       <div className="grid gap-4 md:grid-cols-3">
-        {[...data.seasonMetrics, ...customMetrics].map((metric, index) => {
-          const isCustom = customMetrics.includes(metric);
-
-          return (
-            <article
-              key={`${metric.label}-${index}`}
-              className="rounded border bg-white p-5 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-semibold text-gray-600">{metric.label}</p>
-                {isCustom && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveMetric(metric)}
-                    aria-label={`Remover métrica ${metric.label}`}
-                    className="text-xs font-semibold text-gray-500 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                  >
-                    Remover
-                  </button>
-                )}
-              </div>
-              <p className="mt-3 text-4xl font-bold text-blue-700">{formatNumber(metric.value)}</p>
-              <p className="mt-2 text-sm text-gray-600">{metric.caption}</p>
-            </article>
-          );
-        })}
+        {metricCards.map((metric) => (
+          <article key={metric.id} className="rounded border bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-sm font-semibold text-gray-600">{metric.label}</p>
+              {metric.isCustom && (
+                <button
+                  type="button"
+                  onClick={() => removeMetric(metric.id)}
+                  aria-label={`Remover métrica ${metric.label}`}
+                  className="text-xs font-semibold text-gray-500 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
+            <p className="mt-3 text-4xl font-bold text-blue-700">{formatNumber(metric.value)}</p>
+            <p className="mt-2 text-sm text-gray-600">{metric.caption}</p>
+          </article>
+        ))}
       </div>
 
       <article className="rounded border bg-white p-6 shadow-sm">
         <h2 className="text-xl font-bold text-gray-900">Adicionar métrica</h2>
         <p className="mt-1 text-sm text-gray-600">
-          A métrica entra no painel assim que o formulário é enviado.
+          A métrica entra no painel assim que o formulário é enviado e fica salva neste navegador.
         </p>
-        <MetricForm onAddMetric={handleAddMetric} />
+        <MetricForm onAddMetric={addMetric} />
       </article>
 
       <article className="rounded border bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Pontos por piloto</h2>
+            <h2 className="text-xl font-bold text-gray-900">Classificação final: pontos por piloto</h2>
             <p className="mt-1 text-sm text-gray-600">
               {selectedTeam === ALL_TEAMS ? "Todas as equipes" : selectedTeam}
             </p>
@@ -255,7 +260,7 @@ export const DashboardScreen = () => {
       <article className="rounded border bg-white p-6 shadow-sm">
         <h2 className="text-xl font-bold text-gray-900">Evolução dos líderes</h2>
         <p className="mt-1 text-sm text-gray-600">
-          Pontos acumulados por rodada (série ilustrativa)
+          Pontos acumulados até a rodada {data.round}
         </p>
 
         <div
@@ -287,7 +292,7 @@ export const DashboardScreen = () => {
 
       <div className="grid gap-6 lg:grid-cols-[1.35fr_0.85fr]">
         <article className="rounded border bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900">Classificação de pilotos</h2>
+          <h2 className="text-xl font-bold text-gray-900">Classificação final de pilotos</h2>
           {visibleStandings.length > 0 ? (
             <ul className="mt-4 grid gap-2">
               {visibleStandings.map((standing) => (
