@@ -9,8 +9,9 @@ interface SecureLayoutProps {
 
 export default async function SecureLayout({ children }: SecureLayoutProps) {
   const cookieStore = await cookies();
+  const session = cookieStore.get(SESSION_COOKIE_NAME);
 
-  if (!cookieStore.has(SESSION_COOKIE_NAME)) {
+  if (session?.value !== "1") {
     redirect("/login");
   }
 

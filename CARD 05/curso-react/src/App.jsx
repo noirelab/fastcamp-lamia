@@ -3,10 +3,16 @@ import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
 import Title from "./components/Title";
 
+const loadTasks = () => {
+  try {
+    return JSON.parse(localStorage.getItem("tasks")) ?? [];
+  } catch {
+    return [];
+  }
+};
+
 function App() {
-  const [tasks, setTasks] = useState(
-    JSON.parse(localStorage.getItem("tasks")) || []
-  );
+  const [tasks, setTasks] = useState(loadTasks);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -14,12 +20,10 @@ function App() {
 
   function onTaskClick(taskId) {
     const newTasks = tasks.map((task) => {
-      // PRECISO ATUALIZAR ESSA TAREFA
       if (task.id === taskId) {
         return { ...task, isCompleted: !task.isCompleted };
       }
 
-      // NÃO PRECISO ATUALIZAR ESSA TAREFA
       return task;
     });
     setTasks(newTasks);

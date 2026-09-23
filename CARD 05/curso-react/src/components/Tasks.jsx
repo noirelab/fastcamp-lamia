@@ -25,11 +25,17 @@ function Tasks({ tasks, onTaskClick, onDeleteTaskClick }) {
             {task.isCompleted && <CheckIcon />}
             {task.title}
           </button>
-          <Button onClick={() => onSeeDetailsClick(task)}>
+          <Button
+            aria-label="Ver detalhes da tarefa"
+            onClick={() => onSeeDetailsClick(task)}
+          >
             <ChevronRightIcon />
           </Button>
 
-          <Button onClick={() => onDeleteTaskClick(task.id)}>
+          <Button
+            aria-label="Excluir tarefa"
+            onClick={() => onDeleteTaskClick(task.id)}
+          >
             <TrashIcon />
           </Button>
         </li>

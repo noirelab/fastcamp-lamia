@@ -7,11 +7,14 @@ import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
 export const RegisterScreen = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessage("Cadastro enviado. Este é apenas um exemplo.");
+    setMessage(`Cadastro de ${name} enviado. Este é apenas um exemplo.`);
   };
 
   return (
@@ -26,6 +29,8 @@ export const RegisterScreen = () => {
           label="Nome"
           placeholder="Seu nome"
           required
+          value={name}
+          onChange={(event) => setName(event.target.value)}
         />
         <TextField
           id="email"
@@ -34,6 +39,8 @@ export const RegisterScreen = () => {
           type="email"
           placeholder="voce@email.com"
           required
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
         />
         <TextField
           id="password"
@@ -42,6 +49,8 @@ export const RegisterScreen = () => {
           type="password"
           placeholder="******"
           required
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
         />
         <PrimaryButton type="submit">Cadastrar</PrimaryButton>
       </form>

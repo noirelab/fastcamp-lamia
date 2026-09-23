@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ArticleCard } from "@/modules/blog/components/ArticleCard";
 import type { Article } from "@/modules/blog/types";
 
@@ -11,14 +11,6 @@ interface ArticleListProps {
 export const ArticleList = ({ articles }: ArticleListProps) => {
   const [search, setSearch] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    document.title = "Posts | F1 2021 - Mini Blog";
-
-    return () => {
-      document.title = "F1 2021 - Mini Blog";
-    };
-  }, []);
 
   const filteredArticles = articles.filter((article) =>
     article.title.toLowerCase().includes(search.toLowerCase()),

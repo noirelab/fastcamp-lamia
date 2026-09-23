@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { createSession } from "@/modules/auth/session";
+import { loginAction } from "@/modules/auth/actions";
 import { PrimaryButton } from "@/shared/components/PrimaryButton";
 import { TextField } from "@/shared/components/TextField";
 
@@ -11,11 +11,19 @@ export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    createSession();
-    setMessage(`Login enviado para ${email}.`);
+
+    try {
+      await loginAction();
+      setHasError(false);
+      setMessage(`Login enviado para ${email}.`);
+    } catch {
+      setHasError(true);
+      setMessage("Não foi possível entrar. Tente novamente.");
+    }
   };
 
   return (
@@ -47,14 +55,23 @@ export const LoginScreen = () => {
         <PrimaryButton type="submit">Entrar</PrimaryButton>
       </form>
 
-      {message && <p className="mt-4 text-sm text-green-700">{message}</p>}
+      {message && (
+        <p
+          role={hasError ? "alert" : "status"}
+          className={`mt-4 text-sm ${hasError ? "text-red-600" : "text-green-700"}`}
+        >
+          {message}
+        </p>
+      )}
 
-      <Link
-        href="/perfil"
-        className="mt-5 inline-block text-sm font-semibold text-blue-600 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-      >
-        Ver perfil de exemplo
-      </Link>
+      {message && !hasError && (
+        <Link
+          href="/perfil"
+          className="mt-5 inline-block text-sm font-semibold text-blue-600 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          Ver meu perfil
+        </Link>
+      )}
     </section>
   );
 };
