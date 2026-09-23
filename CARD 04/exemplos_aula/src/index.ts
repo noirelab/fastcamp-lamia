@@ -31,10 +31,10 @@ enum Direction {
 
 const direction = Direction.Left;
 
-// type assert
-const productName: any = "Boné";
+const productName: unknown = "Boné";
 
-// let itemId = productName as string;
+// type assert
 let itemId = <string>productName;
 
 console.log(direction);
+console.log(itemId);

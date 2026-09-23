@@ -11,7 +11,7 @@ function getFirstValueFromArray<Type>(array: Type[]) {
 const firstValueFromStringArray = getFirstValueFromArray<string>(["1", "2"]);
 const firstValueFromNumberArray = getFirstValueFromArray<number>([10, 20]);
 
-// promisses
+// promise
 const returnPromise = async (): Promise<string> => {
   return "5";
 };
@@ -30,3 +30,10 @@ class GenericNumber<T> {
 const myGenericNumber = new GenericNumber<number>(0, (x: number, y: number) => {
   return x + y;
 });
+
+console.log(message);
+console.log(count);
+console.log(firstValueFromStringArray, firstValueFromNumberArray);
+console.log(myGenericNumber.sum(myGenericNumber.zeroValue, 10));
+
+returnPromise().then((value) => console.log(value));

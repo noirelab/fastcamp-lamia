@@ -16,17 +16,20 @@ const user: User = {
   firstName: "Sopa de Cebola",
   age: 20,
   email: "sopa@cebola.com",
+  password: "123456",
   orders: [{ productId: "1", price: 200 }],
   register() {
     return "a";
   },
 };
 
-const printLog = (message: string) => {};
+const printLog = (message: string) => {
+  console.log(message);
+};
 
 printLog(user.password!);
 
-// onions
+// intersection: Author & User
 type Author = {
   books: string[];
 };
@@ -38,21 +41,25 @@ const author: Author & User = {
   firstName: "kaique",
   orders: [],
   register() {
-    return "regsitrado";
+    return "registrado";
   },
 };
 
-// interfaces
+// interfaces: mesmo shape do type User, com readonly no firstName
 interface UserInterface {
   readonly firstName: string;
+  age: number;
   email: string;
-  login(): string;
+  orders: Order[];
+  register(): string;
 }
 
 const emailUser: UserInterface = {
   email: "kaique@gmail.com",
+  age: 30,
   firstName: "kaique",
-  login() {
+  orders: [],
+  register() {
     return "a";
   },
 };
@@ -63,12 +70,17 @@ interface AuthorInterface {
 
 const newAuthor: UserInterface & AuthorInterface = {
   email: "kaique@gmail.com",
+  age: 31,
   firstName: "kaique",
   books: [],
-  login() {
+  orders: [],
+  register() {
     return "a";
   },
 };
 
+// union: number | string
 type Grade = number | string;
 const grade: Grade = 1;
+
+console.log({ author, emailUser, newAuthor, grade });

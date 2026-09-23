@@ -19,7 +19,7 @@ class Person implements IPerson {
   }
 }
 
-// mesma coisa ^
+// parameter properties: declara e atribui direto no constructor
 class PersonRefact {
   constructor(
     readonly id: number,
@@ -39,4 +39,9 @@ class Employee extends Person {
 }
 
 const kaique = new Person(1, "kaique", 21);
-kaique.sayMyName();
+const refact = new PersonRefact(2, "jane", 30);
+const employee = new Employee(3, "doe", 25);
+
+console.log(kaique.sayMyName());
+console.log(refact.id);
+console.log(employee.whoAmI());
