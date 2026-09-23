@@ -11,7 +11,7 @@ const hnHitSchema = z.object({
   points: z.number().nullish(),
   num_comments: z.number().nullish(),
   created_at: z.string().nullish(),
-  url: z.string().nullish(),
+  url: z.url().or(z.literal("")).nullish(),
   story_text: z.string().nullish(),
 });
 
@@ -43,7 +43,7 @@ const toArticle = (hit: HnHit & { title: string }): Article => ({
   points: hit.points ?? 0,
   comments: hit.num_comments ?? 0,
   date: formatDate(hit.created_at),
-  url: hit.url ?? null,
+  url: hit.url || null,
   content: hit.story_text
     ? [stripHtml(hit.story_text)]
     : [
